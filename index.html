@@ -4,131 +4,73 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>SVG World Map Demo</title>
-        <link rel="stylesheet" type="text/css" href="../demo/css/demo.css">
+        <link rel="stylesheet" type="text/css" href="https://raphaellepuschitz.github.io/SVG-World-Map/demo/css/demo.css">
+        <style>
+            body { background-color: #EFEFEF; }
+            #svg-world-map-container { opacity: 0; transition: opacity 1s ease-in; }
+        </style>
 	</head>
-	<body class="wikianim">
-       <!--<div id="wikidata" class="box">
-            Wikipedia page URL<br>
-            <a href="https://en.wikipedia.org/wiki/Press_Freedom_Index" target="_blank">https://en.wikipedia.org/wiki/Press_Freedom_Index</a>
-        </div>--> 
+	<body>
         <div id="labels" class="box">
             <button onclick="myWorldMap.labels('all')">Country labels</button>
             <button onclick="myWorldMap.labels('micro')">Microstate labels</button>
             <button onclick="myWorldMap.download('svg')">Save as SVG</button>
             <button onclick="myWorldMap.download('png')">Save as PNG</button>
         </div>
-        <script src="../src/svg-world-map.js"></script>
+        <script src="https://raphaellepuschitz.github.io/SVG-World-Map/src/svg-world-map.js"></script>
         <script>
-            // Wait for asynchronous Wikipedia JSON load and pass data to library 
-            loadWikipediaData();
-            async function loadWikipediaData() {
-                // Load data from: https://en.wikipedia.org/wiki/Press_Freedom_Index
-                /*const url = "https://en.wikipedia.org/w/api.php?" +
-                    new URLSearchParams({
-                        origin: "*",
-                        action: "parse",
-                        format: "json",
-                        prop: "text",
-                        page: "Press_Freedom_Index"
-                    });*/
-                //const url = "http://localhost:8888/SVG_World_Map/online-offline-conflicts/example_data.json";
+
+            // Global variables
+            var myWorldMap;
+
+            // Wait for asynchronous JSON load and pass data to library 
+            loadConflictData();
+
+            async function loadConflictData() {
                 const url = "conflict.json";
                 try {
                     const req = await fetch(url);
                     const jsonData = await req.json();
-                    console.log(jsonData);
+                    //console.log(jsonData);
                     for (var date in jsonData) {
                         for (var country in jsonData[date]) {
-                            //if (jsonData[date][country] > 0.2) {
-                                //console.log(country);
-                                //console.log(jsonData[date][country]);
-                                //var normalized = parseInt(normalizeBetweenTwoRanges(jsonData[date][country], 0, 1, 0, 255));
-                                //var normalized = parseInt(normalizeBetweenTwoRanges(jsonData[date][country], 0, 1, 0, 100));
-                                //console.log(normalized);
-                                //jsonData[date][country] = normalized;
-                                /*if (normalized > 40) {
-                                    console.log(date);
-                                    console.log(country);
-                                    console.log(normalized);
-                                }*/
-                                //var rgb = 'rgb(255,' + (255-normalized) + ',' + (255-normalized) + ')';
-                                //console.log(rgb);
-                                //jsonData[date][country] = rgb;
-                                //var rgb = getCountryColor(jsonData[date][country]);
-                                var value = jsonData[date][country] * 3;
-                                var rgb = 'rgb(255,' + (255-value) + ',' + (255-value) + ')';
-                                jsonData[date][country] = rgb;
-                            //}
-                            /*var color = parseInt(jsonData[date][country].epr_refugees_from_countries) * 50;
-                            var rgb = 'rgb(' + color + ',128,' + color + ')';
-                            //console.log(rgb);
-                            jsonData[date][country] = rgb;*/
+                            var value = jsonData[date][country] * 3;
+                            var rgb = 'rgb(255,' + (255-value) + ',' + (255-value) + ')';
+                            jsonData[date][country] = rgb;
                         }
                     }
-                    console.log(jsonData);
-                    //var htmlData = json.parse.text["*"];
+                    //console.log(jsonData);
                     // Call the window attached function from the SVG World Map library directly
-                    //parseHTMLTable(htmlData);
                     loadSVGWorldMap(jsonData);
                 } catch (e) {
                     //console.error(e);
                 }
             }
 
-            // Helper function to normalize the values
-            const normalizeBetweenTwoRanges = (val, minVal, maxVal, newMin, newMax) => {
-                return newMin + (val - minVal) * (newMax - newMin) / (maxVal - minVal);
-            }
-
-            // Helper function rgb to hex
-            function rgbToHex(r, g, b) {
-                return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-            }
-
-            // Get country color for map 
-            function getCountryColor(value) {
-                var factor = value / 100;
-                var color = parseInt(factor * 128);
-                /*if (factor == 0) {
-                    return 'rgb(255,255,255)'; // white
-                } else*/ 
-                if (factor > 0.2) { // red
-                    return 'rgb(255,' + (255-color) + ',' + (255-color) + ')';
-                } else if (factor > 0.1) { // orange
-                    return 'rgb(255,' + (255-color) + ',160)';
-                } else { // green
-                    return 'rgb(' + (255-color) + ',255,' + (255-color) + ')';
-                }
-            }
-
-            // Callback function for HTML table parsing, defined in 'options.mapTable'
-            function mapTable(tableData) {
-                if (tableData != '') {
-                    // Startup SVG map
-                    loadSVGWorldMap(tableData);
-                }
-            }
-
-            // Global variables
-            var myWorldMap;
-
             // Load SVG World Map
             async function loadSVGWorldMap(jsonData) {
                 // Custom options
                 var options = { 
-                    bigMap: false, // Use small map
+                    bigMap: true, // Use small map
+                    showOcean: false, // Show or hide ocean layer
+                    showAntarctica: false, // Show or hide antarctic layer
                     showLabels: true, // Show country labels
                     showInfoBox: true, // Show info box
+                    worldColor: '#EFEFEF', 
+                    countryStroke: { out: '#CCCCCC',  over: '#666666',  click: '#666666' }, 
+                    provinceFill: { out: '#FFFFFF',  over: '#FFFFFF',  click: '#FFFFFF' }, 
+                    provinceStroke: { out: '#FFFFFF',  over: '#EEEEEE',  click: '#DDDDDD' }, 
                     timeControls: true, // Time data to activate time antimation controls
-                    timePause: true, // Set pause to false for autostart
+                    timePause: false, // Set pause to false for autostart
                     timeLoop: false // Loop time animation
                 };
                 // Startup SVG World Map
-                myWorldMap = await svgWorldMap(options, false, jsonData);
                 //myWorldMap = await svgWorldMap(options, false);
+                myWorldMap = await svgWorldMap(options, false, jsonData);
                 // Fadein with opacity 
                 document.getElementById('svg-world-map-container').style.opacity = 1;
             }
+            
         </script>
     </body>
 </html>
