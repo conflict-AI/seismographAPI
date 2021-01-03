@@ -3,74 +3,151 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>SVG World Map Demo</title>
-        <link rel="stylesheet" type="text/css" href="https://raphaellepuschitz.github.io/SVG-World-Map/demo/css/demo.css">
+        <title>Conflict AI World Map</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
         <style>
-            body { background-color: #EFEFEF; }
-            #svg-world-map-container { opacity: 0; transition: opacity 1s ease-in; }
+            /*body { background-color: #EFEFEF; }
+            #svg-world-map-container { opacity: 0; transition: opacity 1s ease-in; }*/
         </style>
 	</head>
 	<body>
-        <div id="labels" class="box">
-            <button onclick="myWorldMap.labels('all')">Country labels</button>
-            <button onclick="myWorldMap.labels('micro')">Microstate labels</button>
-            <button onclick="myWorldMap.download('svg')">Save as SVG</button>
-            <button onclick="myWorldMap.download('png')">Save as PNG</button>
+        <!-- Countries -->
+        <div id="countries" class="hidden">
+            <div id="countrysearch" class="box">
+                <div id="searchcontainer">
+                    <i class="flaticon-search"></i>
+                    <input type="text" id="search" autocomplete="off" onkeyup="searchCountry()" onfocusout="(keyctrl = true)" placeholder="Search country...">
+                </div>
+            </div>
+            <div id="countrylist" class="box"></div>
         </div>
-        <script src="https://raphaellepuschitz.github.io/SVG-World-Map/src/svg-world-map.js"></script>
-        <script>
-
-            // Global variables
-            var myWorldMap;
-
-            // Wait for asynchronous JSON load and pass data to library 
-            loadConflictData();
-
-            async function loadConflictData() {
-                const url = "conflict.json";
-                try {
-                    const req = await fetch(url);
-                    const jsonData = await req.json();
-                    //console.log(jsonData);
-                    for (var date in jsonData) {
-                        for (var country in jsonData[date]) {
-                            var value = jsonData[date][country] * 3;
-                            var rgb = 'rgb(255,' + (255-value) + ',' + (255-value) + ')';
-                            jsonData[date][country] = rgb;
-                        }
-                    }
-                    //console.log(jsonData);
-                    // Call the window attached function from the SVG World Map library directly
-                    loadSVGWorldMap(jsonData);
-                } catch (e) {
-                    //console.error(e);
-                }
-            }
-
-            // Load SVG World Map
-            async function loadSVGWorldMap(jsonData) {
-                // Custom options
-                var options = { 
-                    bigMap: true, // Use small map
-                    showOcean: false, // Show or hide ocean layer
-                    showAntarctica: false, // Show or hide antarctic layer
-                    showLabels: true, // Show country labels
-                    showInfoBox: true, // Show info box
-                    worldColor: '#EFEFEF', 
-                    countryStroke: { out: '#CCCCCC',  over: '#666666',  click: '#666666' }, 
-                    provinceFill: { out: '#FFFFFF',  over: '#FFFFFF',  click: '#FFFFFF' }, 
-                    provinceStroke: { out: '#FFFFFF',  over: '#EEEEEE',  click: '#DDDDDD' }, 
-                    timeControls: true, // Time data to activate time antimation controls
-                    timePause: false, // Set pause to false for autostart
-                    timeLoop: false // Loop time animation
-                };
-                // Startup SVG World Map
-                //myWorldMap = await svgWorldMap(options, false);
-                myWorldMap = await svgWorldMap(options, false, jsonData);
-                // Fadein with opacity 
-                document.getElementById('svg-world-map-container').style.opacity = 1;
-            }
-            
-        </script>
+        <!-- Settings -->
+        <div id="settings" class="box hidden">
+            <button onclick="svgPanZoom.zoomIn()"><i class="flaticon-zoom-in"></i></button>
+            <button onclick="svgPanZoom.zoomOut()"><i class="flaticon-zoom-out"></i></button>
+            <button onclick="conflictWorldMap.labels('all')"><i class="flaticon-globe"></i></button>
+            <button onclick="clickInfo()"><i class="flaticon-question"></i></button>
+            <button onclick="toggleBox('countries')"><i class="flaticon-menu"></i></button>
+            <button onclick="toggleBox('details')"><i class="flaticon-chart"></i></button>
+        </div>
+        <!-- Details -->
+        <div id="details" class="box hidden">
+            <span id="countrytitle" class="big top">World</span>
+            <div id="countrydetails" class="bgbox">
+                <div id="countryinfo"></div>
+                <div class="chart">
+                    <canvas id="countrycanvas"></canvas>
+                </div>
+                <div class="chart high">
+                    <canvas id="pushpullcanvas"></canvas>
+                </div>
+                <div id="pushpullinfo"></div>
+            </div>
+            <!--<span id="worldtitle" class="big top">World</span>
+            <div id="worlddetails" class="bgbox">
+            </div>-->
+            <div id="help">
+                <span class="big top">How to use</span>
+                <div class="bgbox">
+                    <ul>
+                        <li><b>Click on a country</b> for detailed information</li>
+                        <li>Use the <b>timeline controls</b> or the <b>slider</b></li>
+                        <li><b>Zoom</b> with mouse wheel</li>
+                        <li><b>Drag</b> the map with click and hold</li>
+                        <!--<li>Double-clicking on a country will zoom it in, double-clicking on the ocean will zoom out</li>-->
+                    </ul>
+                </div>
+                <span class="big top">Keyboard commands</span>
+                <div class="bgbox">
+                    <ul>
+                        <li>"<b> &nbsp; </b>" (Space): Pause</li>
+                        <li><b>+ -</b> (Plus & minus): Play animation faster or slower</li>
+                        <li><b>⯅ ⯆ ⯇ ⯈</b> (Arrow keys): Start, end, one day back or forward</li>
+                        <!--<li><b>C</b>, <b>D</b>, <b>I</b> and <b>L</b>: Show or hide the country list, details, info or labels</li>-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Conflict graph -->
+        <div id="conflicts" class="box hidden">
+            <span id="countrytitlebottom" class="big top center"></span>
+            <span id="countrytitleinfo" class="small center">(click a country for details)</span>
+            <div class="chart big">
+                <canvas id="conflictcanvas"></canvas>
+            </div>
+        </div>
+        <!-- Logo -->
+        <!--<div id="logo" class="hidden">
+            <span class="small black top">just another</span>
+            <div class="big">
+                <span class="red">Conflict A.I.</span>
+                <span class="green">WorldMap</span>
+            </div>
+        </div>-->
+        <!-- Info -->
+        <div id="info" class="box hidden">
+            <div class="center">
+                <h3>Recommendation for Action:</h3>
+                <h1>Neural Network Interpretability in Armed Conflict Prediction</h1>
+                This interactive dashboard is accompanying the paper <a href="">Recommendation for Action: Neural Network Interpretability in Armed Conflict Prediction</a>.<br>
+                It is allowing the reader to explore our historic predictions of conflict alongside the SHAP interpretability method.<br><br>
+            </div> 
+            <div class="bgbox col-3">
+                <b>Authors:</b><br>
+                Data collection and methodology: will follow<br>
+                Interactive dashboard: will follow
+            </div>
+            <div class="bgbox col-3">
+                <b>Links:</b><br>
+                Paper: will follow<br>
+                Code: will follow<br>
+                Data: will follow
+            </div>
+            <div class="bgbox col-3">
+                <b>Please cite:</b><br>
+                will follow
+            </div>
+            <br style="clear: both;"><br>
+            <div>
+                Abstract:<br>
+                Governmental and non-governmental institutions are now deploying neural networks in the prediction of armed conflict due to their strong predictive power. The advent of interpretability methods is making these predictions increasingly explainable, enticing political and military decision-makers to even derive policy recommendations. The degree to which interpretability methods exceed purely predictive decision support gets blurred in this highly secretive and ethically complex setting. Based on 20 years of conflict data on 249 countries and 60 openly available socio-economic and political indicators of monthly granularity, we train a LSTM neural network with an attention mechanism in a time-shifted binary conflict classification task. Based on our high-performing model, we demonstrate, survey and interpret several interpretability methods such as LIME, Anchors, SHAP, CEM and Attention in the context of conflict prediction. We find that explanations provided by these methods are indeed tempting to derive prescriptive policy recommendations, particularly if based on actionable data features. However, feature variables may be endogenous, confounded, collinear or correlated with conflict, making the model “predictive causal" and recommendations “preemptive" at most.
+                Ethics Statement<br>
+                Our interdisciplinary paper bridges the academic disciplines of Machine Learning and Conflict and Peace Studies. The prediction of armed conflict is highly sensitive and context-dependent. Many supra-national and non-governmental institutions rely on computational models for peaceful, humanitarian purposes such as conflict mitigation and prevention. These models play an important role in the compilation of comprehensive state reports, war journalism, assessment of war crime, provision of humanitarian aid and international, jurisprudential decision-making. We would like to contribute to a transparent scholarly debate, rather than leaving ethically complex questions to secretive enterprises or governmental institutions. Even more so, since conflict prediction models are already deployed on a daily basis in real-world applications, despite little scrutiny. Assessment of conflict should strive for more diverse, context-dependent perspectives accounting for psychological, non-lethal, socio-economic damage and other more subtle, but no less important factors. We are aware of the risk of bias within our primary data sources, which are all freely available and funded by US American and European donors. The data does not violate privacy rights by disclosing identifiable individuals. The countries analysed in our study are selected solely based on data availability. Training our models on empirical data, results are at risk of replicating inherent data bias.
+                Data Features categorised by PMESII<br>
+                <br>Political<br>
+                WGI: regulatory quality, government effectiveness, rule of law, political stability, control of corruption<br>
+                WDI: disaster risk reduction progress score, social protection rating<br>
+                <br>Military<br>
+                ACLED: fatalities, violence against civilians, battles, riots, protests, explosions/remote violence, strategic developments<br>
+                UCDP GED: state-based conflict, non-state conflict, one-sided violence<br>
+                SIPRI: military imports, military exports, arms imports, arms exports<br>
+                <br>Economic<br>
+                WDI: service imports, goods imports, poverty severity index, gdp per capita, market capitalisation, foreign direct investment, gini index, crop production index, food production index, unemployment rate, ease of doing business, stocks traded, import and export price indexes, CO2 emissions, international tourism, consumer price index, inflation<br>
+                Prio-Grid: purchasing power parity<br>
+                <br>Social<br>
+                WDI: female labor force, gender equality, growth of population, life expectancy<br>
+                UNHCR: incoming refugees, outgoing refugees, net migration<br>
+                <br>Infrastructure<br>
+                WDI: access to electricity, freshwater withdrawals, population density, school enrolment, literacy rate<br>
+                CPIA: paved roads, urban land area, rural land area<br>
+                Prio-Grid: children mortality, children malnutrition, agricultural area, forestation, drug cultivation, precipitation, night time light emission, gold occurrences, diamond occurrences, air temperature, rain season<br>
+                <br>Information<br>
+                WGI: voice and accountability, transparency index, transparency of information index<br>
+                Prio-Grid: quality of financial information<br>
+                Resources:
+            </div>
+        </div>
+        <!-- Loading -->
+        <div id="loading" class="box">~~~ Loading ~~~</div>
+        <!-- Scripts -->
+        <script src="src/svg-world-map.js"></script>
+        <script src="js/svg-pan-zoom.min.js"></script>
+        <!--<script src="js/rough.min.js"></script>-->
+        <script src="js/chart.min.js"></script>
+        <!--<script src="js/chartjs-plugin-rough.min.js"></script>
+        <script src="js/chartjs-plugin-crosshair.js"></script>-->
+        <!--<script src="js/chartjs-plugin-vertical-line.js"></script>-->
+        <script src="js/chartjs-plugin-datalabels.js"></script>
+        <script src="js/conflict-ai.js"></script>
     </body>
 </html>
