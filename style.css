@@ -96,16 +96,16 @@ ul li {
 .box {
     position: fixed;
     padding: 10px;
-    border: 1px solid #000000;
-    /*border-radius: 8px;*/
+    /*border: 1px solid #000000;
+    border-radius: 8px;
     color: #CDCDCD;
-    /*background-color: rgba(50, 50, 50, .9);
-    background-color: rgba(208, 208, 178, .85);*/
-    background-color: rgba(0, 11, 43, 0.8);
-    /*background-color: rgba(255, 255, 255, 0.9);*/
+    background-color: rgba(208, 208, 178, .85);
+    background-color: rgba(50, 50, 50, .9);
+    background-color: rgba(0, 11, 43, 0.8);*/
+    background-color: rgba(255, 255, 255, 0.9);
     transition: opacity .5s;
-    /*color: #666666;
-    border: 1px solid #DDDDDD;*/
+    color: #666666;
+    border: 1px solid #DDDDDD;
 }
 
 .bgbox {
@@ -113,11 +113,9 @@ ul li {
     margin: 5px 0 20px;
     border-radius: 4px;
     /*background-color: rgba(112, 109, 107, 0.3);
-    background-color: rgba(240, 240, 240, 0.5);*/
-    background-color: rgba(112, 109, 107, 0.3);
-    /*background-color: #EFEFEF;
-    border: 1px solid #DDDDDD;*/
-    background-color: #474d68;
+    background-color: #EFEFEF;*/
+    background-color: rgba(240, 240, 240, 0.5);
+    border: 1px solid #DDDDDD;
 }
 
 /*.bgbox:last-child {
@@ -189,8 +187,8 @@ ul li {
 #settings button i::before {
     font-size: 17px;
     margin: 0 10px;
-    color: #CDCDCD;
-    /*color: #666666;*/
+    /*color: #CDCDCD;*/
+    color: #666666;
 }
 
 #settings button i.flaticon-chart::before {
@@ -420,18 +418,14 @@ ul li {
 #conflicts {
     left: 202px;
     right: 302px;
-    /*bottom: 52px;*/
-    bottom: 0;
+    bottom: 52px;
+    /*bottom: 0;*/
     height: 275px;
     /*overflow-y: auto;
     border-radius: 3px;*/
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    border-width: 1px 1px 0 1px;
-}
-
-#conflicts, #countrydetails .chartjs-size-monitor, #countrydetails .high {
-    display: none;
+    border-width: 1px;
 }
 
 /* Controls */
@@ -445,13 +439,13 @@ ul li {
     height: 40px;
     position: fixed;
     padding: 10px 10px 0;
-    /*background-color: rgba(50, 50, 50, .9) !important;*/
+    /*background-color: rgba(50, 50, 50, .9) !important;
     color: #CDCDCD !important;
-    background-color:rgba(0, 11, 43, 0.8) !important;
-    /*background-color: rgba(255, 255, 255, 0.8)!important;
-    color: #444444 !important;
-    border: 1px solid #DDDDDD;*/
+    background-color:rgba(0, 11, 43, 0.8) !important;*/
+    background-color: rgba(255, 255, 255, 0.8)!important;
     transition: opacity .5s;
+    color: #444444 !important;
+    border: 1px solid #DDDDDD;
 }
 
 #map-control-buttons {
@@ -466,7 +460,6 @@ ul li {
 }
 
 #map-slider-container {
-    /*display: none;*/
     left: 202px;
     right: 302px;
     width: auto !important;
@@ -499,8 +492,8 @@ ul li {
 #map-controls button i::before {
     font-size: 20px;
     margin: 0 7px !important;
-    color: #CDCDCD;
-    /*color: #444444;*/
+    /*color: #CDCDCD;*/
+    color: #444444;
 }
 
 #map-speed-controls {
