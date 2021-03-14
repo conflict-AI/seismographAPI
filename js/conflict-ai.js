@@ -45,9 +45,9 @@ function initStartup() {
             window.clearInterval(startuptimer);
             document.getElementById('loading').innerHTML = '~~~ There seems to be a problem ~~~<br><br>Please try a <a href="javascript:location.reload()">relaod</a>';
         } else if (conflictData == undefined) {
-            document.getElementById('loading').innerHTML = '~~~ Loading Conflict Data ~~~';
+            document.getElementById('loading').innerHTML = '~~~ Loading Data ~~~'; //'~~~ Loading Conflict Data ~~~'
         } else if (svgInit == false && svgLoaded == false && colorData != undefined && conflictData != undefined && timeData.length > 1) {
-            document.getElementById('loading').innerHTML = '~~~ Loading SVG Map ~~~';
+            document.getElementById('loading').innerHTML = '~~~ Loading Map ~~~'; //'~~~ Loading SVG Map ~~~'
             loadSVGMap();
             svgInit = true;
         // TODO: Remove timeData globally with conflictData?
@@ -175,7 +175,6 @@ function loadShapleyData() {
     }
 }
 
-
 // Sort conflict data for map countries
 function initColorData() {
     colorData = JSON.parse(JSON.stringify(conflictData)); // Copy conflict object 
@@ -192,19 +191,19 @@ function initColorData() {
 // Format: ground data, prediction
 function initConflictData() {
     chartconflict.data.labels = Object.keys(conflictData);
-    chartcountry.data.labels = Object.keys(conflictData);
+    //chartcountry.data.labels = Object.keys(conflictData);
     for (var date in conflictData) {
         for (var country in conflictData[date]) {
             if (country == 'World') {
                chartconflict.data.datasets[0].data.push(predictionData[date][country]);
                chartconflict.data.datasets[1].data.push(conflictData[date][country]);
-               chartcountry.data.datasets[0].data.push(predictionData[date][country]);
-               chartcountry.data.datasets[1].data.push(conflictData[date][country]);
+               //chartcountry.data.datasets[0].data.push(predictionData[date][country]);
+               //chartcountry.data.datasets[1].data.push(conflictData[date][country]);
             }
         }
     }
     chartconflict.update();
-    chartcountry.update();
+    //chartcountry.update();
 }
 
 // Update details
@@ -213,13 +212,17 @@ function updateDetails() {
     // Set vertical line
     chartconflict.data.lineAtIndex = day;
     chartconflict.update();
-    chartcountry.data.lineAtIndex = day;
-    chartcountry.update();
+    //chartcountry.data.lineAtIndex = day;
+    //chartcountry.update();
     // Update info
     if (detailcountry == 'World') {
         document.getElementById('countrytitle').innerHTML =  'World';
+        document.getElementById('countrytitlebottom').innerHTML =  'World';
+        document.getElementById('countrytitleinfo').innerHTML =  '(click a country for details)';
     } else {
         document.getElementById('countrytitle').innerHTML = conflictWorldMap.countries[detailcountry].name;
+        document.getElementById('countrytitlebottom').innerHTML = conflictWorldMap.countries[detailcountry].name;
+        document.getElementById('countrytitleinfo').innerHTML =  '(<a onclick="console.log(\'yoli?\');mapClick(\'World\')">back to global view</a>)';
     }
     if (predictionData[date] != undefined) {
         document.getElementById('countryinfo').innerHTML = 'Date: ' + date + '<br>Predicted: ' + predictionData[date][detailcountry] + '<br>Ground Truth: ' + conflictData[date][detailcountry];
@@ -250,6 +253,15 @@ function updateDetails() {
 function updateCharts() {
     var date = Object.keys(conflictData)[day];
     // Shapley chart
+    /*//var labeltext = { labels: { title: { color: 'green', text: '123' }, value: { text: '123' } } };
+    var labeltext = { labels: { title: { color: 'green', text: '123' }, value: { text: '123' } } };
+    /*Object.keys(shapleyData[detailcountry][date].pull).forEach(function() {
+
+    });
+    console.log(labeltext);
+    chartpushpull.data.datasets[0].datalabels = labeltext;
+    console.log(chartpushpull.data.datasets[0].datalabels);
+    console.log(chartpushpull);*/
     chartpushpull.data.datasets[0].labels = Object.keys(shapleyData[detailcountry][date].pull);
     chartpushpull.data.datasets[1].labels = Object.keys(shapleyData[detailcountry][date].push);
     chartpushpull.data.datasets[0].data = changeToNegative(Object.values(shapleyData[detailcountry][date].pull));
@@ -275,8 +287,7 @@ function initCountryList() {
         var countryname = conflictWorldMap.countries[country].name;
         if (country != 'World') {
             countylist += '<li id="' + countrycode + '" data-name="' + countryname + '" data-conflict="" data-prediciton="" onmouseover="conflictWorldMap.over(\'' + countrycode + '\')" onmouseout="conflictWorldMap.out(\'' + countrycode + '\')" onclick="countryListClick(\'' + countrycode + '\')">' + countryname + '</li>';
-        /*
-        if (dayData[countrycode] != undefined && country != 'World') {
+        /*if (dayData[countrycode] != undefined && country != 'World') {
             // Main country
             //if (dayData[countrycode].provinces == undefined) {
                 countylist += '<li id="' + countrycode + '" data-name="' + countryname + '" data-confirmed="" onmouseover="conflictWorldMap.over(\'' + countrycode + '\')" onmouseout="conflictWorldMap.out(\'' + countrycode + '\')" onclick="countryListClick(\'' + countrycode + '\')">' + countryname + '</li>';
@@ -375,16 +386,30 @@ function countryListClick(countrycode) {
 
 // Callback function from SVG World Map JS
 function mapClick(path) {
-    if (path.country != undefined || path.id == 'Ocean' || path.id == 'World') {
-        if (path.id == 'Ocean' || path.id == 'World') {
+    if (path.country != undefined || path.id == 'Ocean' || path.id == 'World' || path == 'World') {
+        if (path.id == 'Ocean' || path.id == 'World' || path == 'World') {
             var countryid = 'World';
+            var countryname = 'World';
         } else {
             var countryid = path.country.id;
+            var countryname = path.country.name;
         }
         detailcountry = countryid;
         loadShapleyData();
+        // Update conflict chart
+        chartconflict.data.datasets[0].data = [];
+        chartconflict.data.datasets[1].data = [];
+        for (var date in conflictData) {
+            for (var country in conflictData[date]) {
+                if (country == detailcountry) {
+                   chartconflict.data.datasets[0].data.push(predictionData[date][country]);
+                   chartconflict.data.datasets[1].data.push(conflictData[date][country]);
+                }
+            }
+        }
+        chartconflict.update();
         // Update country chart
-        chartcountry.data.datasets[0].data = [];
+        /*chartcountry.data.datasets[0].data = [];
         chartcountry.data.datasets[1].data = [];
         for (var date in conflictData) {
             for (var country in conflictData[date]) {
@@ -394,7 +419,7 @@ function mapClick(path) {
                 }
             }
         }
-        chartcountry.update();
+        chartcountry.update();*/
     }
 }
 
@@ -417,6 +442,17 @@ Chart.Legend.prototype.afterFit = function() {
     this.height = this.height + 10;
 };
 
+// Tooltip position
+Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
+    //var tooltip = this;
+    //console.log(elements);
+    //console.log(eventPosition);
+    return {
+        x: eventPosition.x,
+        y: 0
+    };
+};
+
 // Chart vertical line
 var originalLineDraw = Chart.controllers.line.prototype.draw;
 Chart.helpers.extend(Chart.controllers.line.prototype, {
@@ -432,8 +468,8 @@ Chart.helpers.extend(Chart.controllers.line.prototype, {
             ctx.save();
             ctx.beginPath();
             ctx.moveTo(xaxis.getPixelForValue(undefined, index), yaxis.top);
-            ctx.strokeStyle = '#ff0000';
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = '#666666';
+            ctx.lineWidth = 1;
             ctx.lineTo(xaxis.getPixelForValue(undefined, index), yaxis.bottom);
             ctx.stroke();
             ctx.restore();
@@ -443,15 +479,25 @@ Chart.helpers.extend(Chart.controllers.line.prototype, {
 
 // Chart init
 function initCharts() {
+    var chartLabel;
     // Options for conflict charts
     var chartoptions = { 
         maintainAspectRatio: false, 
-        legend: { /*reverse: true,*/ labels: { usePointStyle: true, fontColor: "#666666", fontSize: 11 } }, 
+        legend: { /*position: 'bottom',*/ labels: { usePointStyle: true, fontColor: "#666666", fontSize: 11 } }, /*reverse: true,*/
         elements: { point:{ radius: 0 } }, 
         scales: { 
-            xAxes: [{ ticks: { display: false }, gridLines: { display: true } }], 
-            yAxes: [{ ticks: { suggestedMin: 0, fontColor: "#666666", /*suggestedMax: 500*/
-                    callback: function(label, index, labels) {
+            xAxes: [{ fontColor: "#FF0000", ticks: {
+                callback: function(label, index, labels) {
+                    if (chartLabel != label.substr(0, 4)) {
+                        chartLabel = label.substr(0, 4);
+                    } else {
+                        chartLabel = '';
+                    }
+                    return chartLabel;
+                }
+            }, gridLines: { display: true } }], 
+            yAxes: [{ ticks: { fontColor: "#FF0000", /*suggestedMin: 0, fontColor: '#ECB0B0'*/
+                    /*callback: function(label, index, labels) {
                         if (label >= 1000000) {
                             return label/1000000+'m';
                         } else  if (label >= 1000) {
@@ -459,42 +505,57 @@ function initCharts() {
                         } else {
                             return label;
                         }
-                    }
+                    }*/
                 }
             }]
         },
         tooltips: {
             mode: 'index',
-            intersect: false
+            intersect: false,
+            position: 'custom',
+            caretSize: 0,
+            backgroundColor: 'rgba(250, 250, 250, 0.9)',
+            titleFontSize: 14,
+            titleFontColor: '#666666',
+            bodyFontSize: 13,
+            bodyFontColor: '#666666',
+            borderWidth: 1,
+            borderColor: '#CCCCCC'
+            /*callbacks: {
+                label: function (tooltipItems, data) {
+                    console.log(tooltipItems.index);
+                    //console.log(data);
+                }
+            }*/
         },
         plugins: {
             datalabels: false,
-            crosshair: {
+            /*crosshair: {
                 line: {
                     color: '#F66',        // crosshair line color
                     width: 1,             // crosshair line width
                     dashPattern: [5, 5]   // crosshair line dash pattern
                 },
-                    sync: {
+                sync: {
                     enabled: true,            // enable trace line syncing with other charts
                     group: 1,                 // chart group
                     suppressTooltips: false   // suppress tooltips when showing a synced tracer
                 },
                 zoom: {
-                    enabled: true,                                      // enable zooming
-                    zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',     // background color of zoom box 
+                    enabled: false,                                      // enable zooming
+                    /*zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',     // background color of zoom box 
                     zoomboxBorderColor: '#48F',                         // border color of zoom box
                     zoomButtonText: 'Reset Zoom',                       // reset zoom button text
                     zoomButtonClass: 'reset-zoom',                      // reset zoom button class
                 },
                 callbacks: {
                     beforeZoom: function(start, end) {                  // called before zoom, return false to prevent zoom
-                        return true;
+                        return false;
                     },
                     afterZoom: function(start, end) {                   // called after zoom
                     }
                 }
-            }
+            }*/
         }
     };
     // Change chart y axis label for conflict chart
@@ -509,8 +570,21 @@ function initCharts() {
         id: 'CG',
         type: 'linear',
         position: 'right',
-        ticks: { maxTicksLimit: 5, beginAtZero: true }
+        ticks: { maxTicksLimit: 5, beginAtZero: true, fontColor: '#ECB0B0' }
     }];
+    // Hover / click position callback
+    chartoptions.hover = {
+        mode: 'index',
+        intersect: false,
+        onHover: function (event, item) {
+            if (item.length && (event.type == 'click' || event.type == 'mousemove')) {
+                //console.log(event.type);
+                //console.log(item[0]._index);
+                document.getElementById('map-slider').value = item[0]._index;
+                document.getElementById('map-slider').dispatchEvent(new Event("input"));
+            }
+        }
+    };
     // Conflict charts
     chartconflict = new Chart(conflictcanvas, {
         type: 'line',
@@ -536,9 +610,10 @@ function initCharts() {
     });
     // Change chart y axis label for conflict chart
     chartoptions.scales.xAxes[0].gridLines.display = false;
+    chartoptions.scales.xAxes[0].ticks.display = false;
     //chartoptions.scales.yAxes[1].gridLines.display = false;
     //console.log(chartoptions.scales.xAxes);
-    chartcountry = new Chart(countrycanvas, {
+    /*chartcountry = new Chart(countrycanvas, {
         type: 'line',
         data: {
             labels: [],
@@ -557,7 +632,7 @@ function initCharts() {
             }]
         },
         options: chartoptions
-    });
+    });*/
     // Push / pull chart
     chartpushpull = new Chart(pushpullcanvas, {
         type: 'horizontalBar',
@@ -579,6 +654,7 @@ function initCharts() {
                 display: true,
                 text: 'Pull factors                Push factors'
             },
+            tooltips: false,
             //plugins: { crosshair: { sync: { enabled: false } } },
             plugins: { 
                 crosshair: false,
@@ -587,15 +663,54 @@ function initCharts() {
                 }*/
                 datalabels: {
                     display: true,
-                    align: 'center',
-                    anchor: 'center'
+                    align: function(value, context) {
+                        if (value.datasetIndex != undefined) {
+                            if (value.datasetIndex == 0) {
+                                return 'left';
+                            } else {
+                                return 'right';
+                            }
+                        }
+                    },
+                    anchor: function(value, context) {
+                        if (value.datasetIndex != undefined) {
+                            if (value.datasetIndex == 0) {
+                                return 'end';
+                            } else {
+                                return 'start';
+                            }
+                        }
+                    },
+                    //anchor: 'start',
+                    formatter: function(value, context) {
+                        //return context.chart.data.labels[context.dataIndex];
+                        if (context.dataset.labels != undefined) {
+                            //console.log(context.dataIndex);
+                            //console.log(context.dataset.labels);
+                            //console.log(context.dataset.labels[context.dataIndex]);
+                            //return context.dataset.labels[0];
+                            return context.dataset.labels[context.dataIndex];
+                        }
+                        //return context.dataset.labels[0];
+                    }
+                    /*color: 'blue',
+                    labels: {
+                        title: {
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
+                        value: {
+                            color: 'green'
+                        }
+                    }*/
                 }
              },
             scales: {
                 xAxes: [{
                     ticks: {
-                        //min: -0.1, 
-                        //max: 0.1,
+                        min: -0.05, 
+                        max: 0.08,
                     }, 
                     gridLines: {
                         lineWidth: 0,

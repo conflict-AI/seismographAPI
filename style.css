@@ -113,8 +113,8 @@ ul li {
     margin: 5px 0 20px;
     border-radius: 4px;
     /*background-color: rgba(112, 109, 107, 0.3);
-    background-color: #EFEFEF;*/
-    background-color: rgba(240, 240, 240, 0.5);
+    background-color: rgba(240, 240, 240, 0.5);*/
+    background-color: #EFEFEF;
     border: 1px solid #DDDDDD;
 }
 
@@ -418,14 +418,14 @@ ul li {
 #conflicts {
     left: 202px;
     right: 302px;
-    bottom: 52px;
-    /*bottom: 0;*/
+    /*bottom: 52px;*/
+    bottom: 0;
     height: 275px;
     /*overflow-y: auto;
     border-radius: 3px;*/
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    border-width: 1px;
+    border-width: 1px 1px 0 1px;
 }
 
 /* Controls */
@@ -460,12 +460,13 @@ ul li {
 }
 
 #map-slider-container {
-    left: 202px;
+    display: none;
+    /*left: 202px;
     right: 302px;
     width: auto !important;
     border-top-right-radius: 3px;
     border-top-left-radius: 3px;
-    border-width: 1px 1px 0 1px;
+    border-width: 1px 1px 0 1px;*/
 }
 
 #map-date {
