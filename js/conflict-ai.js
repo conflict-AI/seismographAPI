@@ -216,16 +216,16 @@ function updateDetails() {
     //chartcountry.update();
     // Update info
     if (detailcountry == 'World') {
-        document.getElementById('countrytitle').innerHTML =  'World';
+        //document.getElementById('countrytitle').innerHTML =  'World';
         document.getElementById('countrytitlebottom').innerHTML =  'World';
         document.getElementById('countrytitleinfo').innerHTML =  '(click a country for details)';
     } else {
-        document.getElementById('countrytitle').innerHTML = conflictWorldMap.countries[detailcountry].name;
+        //document.getElementById('countrytitle').innerHTML = conflictWorldMap.countries[detailcountry].name;
         document.getElementById('countrytitlebottom').innerHTML = conflictWorldMap.countries[detailcountry].name;
         document.getElementById('countrytitleinfo').innerHTML =  '(<a onclick="console.log(\'yoli?\');mapClick(\'World\')">back to global view</a>)';
     }
     if (predictionData[date] != undefined) {
-        document.getElementById('countryinfo').innerHTML = 'Date: ' + date + '<br>Predicted: ' + predictionData[date][detailcountry] + '<br>Ground Truth: ' + conflictData[date][detailcountry];
+        document.getElementById('countryinfo').innerHTML = 'Date: ' + date + '<br>Conflict Prediction (6 months ahead): ' + predictionData[date][detailcountry] + '<br>Composite Conflict Intensity (Ground Truth): ' + conflictData[date][detailcountry];
     }
     if (shapleyData[detailcountry][date] != undefined) {
         var pull = Object.entries(shapleyData[detailcountry][date].pull);
@@ -434,7 +434,7 @@ function clickInfo() {
         }
     }
     toggleBox('info');
-    toggleBox('logo');
+    //toggleBox('logo');
 }
 
 // Chart legend padding
@@ -592,13 +592,13 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Conflict Prediciton',
+                label: 'Conflict Prediction (6 months ahead)',
                 yAxisID: 'CP',
                 data: [],
                 borderWidth: 1,
                 backgroundColor: 'rgba(128, 128, 128, .3)'
             }, {
-                label: 'Ground Truth',
+                label: 'Composite Conflict Intensity (Ground Truth)',
                 yAxisID: 'CG',
                 data: [],
                 borderWidth: 1,
