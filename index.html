@@ -72,40 +72,46 @@
         <div id="conflicts" class="box hidden">
             <span id="countrytitlebottom" class="big top center"></span>
             <span id="countrytitleinfo" class="small center">(click a country for details)</span>
+            <div id="mapsync" class="small center">
+                <!--<input type="checkbox" id="predmap" name="predmap" onclick="showPrediction()">
+                <label for="predmap">Show prediction on map</label>-->
+                <input type="checkbox" id="predsync" name="predsync" onclick="syncPrediction()">
+                <label for="predsync">Sync prediction with ground truth</label>
+            </div>
             <div class="chart big">
                 <canvas id="conflictcanvas"></canvas>
             </div>
         </div>
-        <!-- Logo -->
-        <!--<div id="logo" class="hidden">
-            <span class="small black top">just another</span>
-            <div class="big">
-                <span class="red">Conflict A.I.</span>
-                <span class="green">WorldMap</span>
-            </div>
-        </div>-->
+        <!-- Overlay -->
+        <div id="overlay" class="hidden" onclick="clickInfo()"></div>
         <!-- Info -->
         <div id="info" class="box hidden">
+            <button class="close" onclick="clickInfo()"><i class="flaticon-cross"></i></button>
             <div class="center">
                 <h3>Recommendation for Action:</h3>
                 <h1>Neural Network Interpretability in Armed Conflict Prediction</h1>
                 This interactive dashboard is accompanying the paper <a href="">Recommendation for Action: Neural Network Interpretability in Armed Conflict Prediction</a>.<br>
                 It is allowing the reader to explore our historic predictions of conflict alongside the SHAP interpretability method.<br><br>
             </div> 
-            <div class="bgbox col-3">
+            <div class="bgbox col-4">
                 <b>Authors:</b><br>
                 Data collection and methodology: will follow<br>
                 Interactive dashboard: will follow
             </div>
-            <div class="bgbox col-3">
+            <div class="bgbox col-4">
                 <b>Links:</b><br>
                 Paper: will follow<br>
                 Code: will follow<br>
                 Data: will follow
             </div>
-            <div class="bgbox col-3">
+            <div class="bgbox col-4">
                 <b>Please cite:</b><br>
                 will follow
+            </div>
+            <div class="bgbox col-4">
+                <b>Download data:</b><br>
+                JSON<br>
+                CSV
             </div>
             <br style="clear: both;"><br>
             <div>

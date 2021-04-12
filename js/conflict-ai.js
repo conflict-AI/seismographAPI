@@ -8,8 +8,8 @@ var svgPanZoom; // For svg-pan-zoom.js
 var conflictData = {}; // Empty object for conflict data
 var predictionData = {}; // Empty object for prediction data
 var shapleyData = {}; // Empty object for shapley data
-var colorData; 
-//var dayData = {}; // Empty object for all days complete data 
+var colorData = {}; // Empty object for color data
+var syncData = false; // Sync conflict prediction and ground truth
 var timeData = []; // Empty array for time controls
 var detailcountry = 'World'; // 'World'
 var detailprovince = false; 
@@ -107,6 +107,8 @@ function initSVGMap() {
             svgPanZoom.pan({ x: -5, y: 20 }); // Set map to better start position for small horizontal screens
             svgPanZoom.zoomBy(1.1); // Zoom in for small screens
         }
+        // Uncheck checkbox
+        document.getElementById('predsync').checked = false;
         // Hide loading and show boxes and map after startup
         toggleBox('loading');
         toggleBox('settings');
@@ -145,7 +147,7 @@ function mapDate(updateDate) {
 
 // Wait for JSON load and pass data to library 
 function loadConflictData() {
-   loadShapleyData('World');
+   loadShapleyData();
     var conflictJson = "data/conflict_gt.json";
     loadFile(conflictJson, function(conflictResponse) {
         conflictData = JSON.parse(conflictResponse); 
@@ -222,10 +224,16 @@ function updateDetails() {
     } else {
         //document.getElementById('countrytitle').innerHTML = conflictWorldMap.countries[detailcountry].name;
         document.getElementById('countrytitlebottom').innerHTML = conflictWorldMap.countries[detailcountry].name;
-        document.getElementById('countrytitleinfo').innerHTML =  '(<a onclick="console.log(\'yoli?\');mapClick(\'World\')">back to global view</a>)';
+        document.getElementById('countrytitleinfo').innerHTML =  '(<a onclick="mapClick(\'World\')">back to global view</a>)';
     }
     if (predictionData[date] != undefined) {
-        document.getElementById('countryinfo').innerHTML = 'Date: ' + date + '<br>Conflict Prediction (6 months ahead): ' + predictionData[date][detailcountry] + '<br>Composite Conflict Intensity (Ground Truth): ' + conflictData[date][detailcountry];
+        var countryinfo = '<table>';
+        countryinfo += '<tr><td>Country</td><td><b>' + document.getElementById('countrytitlebottom').innerHTML + '</b></td></tr>';
+        countryinfo += '<tr><td>Date</td><td><b>' + date + '</b></td></tr>';
+        countryinfo += '<tr><td>Probability of Conf.<br><small>(+6 months)</small></td><td><b>' + predictionData[date][detailcountry] + '</b></td></tr>';
+        countryinfo += '<tr><td>Conflict Intensity<br><small>(Ground Truth)</small></td><td><b>' + conflictData[date][detailcountry] + '</b></td></tr>';
+        countryinfo += '</table>';
+        document.getElementById('countryinfo').innerHTML = countryinfo;
     }
     if (shapleyData[detailcountry][date] != undefined) {
         var pull = Object.entries(shapleyData[detailcountry][date].pull);
@@ -241,27 +249,17 @@ function updateDetails() {
         }
         ppinfo += '</table>';
         document.getElementById('pushpullinfo').innerHTML = ppinfo;
-        // Update charts
-        updateCharts();
+        // Update shapley chart
+        updateChartPushPull();
     }
     // Update country list
     updateCountryList();
 }
 
-// Update charts for world and selected country
+// Update shapley chart
 // Format: [0] = pull, [1] = push
-function updateCharts() {
+function updateChartPushPull() {
     var date = Object.keys(conflictData)[day];
-    // Shapley chart
-    /*//var labeltext = { labels: { title: { color: 'green', text: '123' }, value: { text: '123' } } };
-    var labeltext = { labels: { title: { color: 'green', text: '123' }, value: { text: '123' } } };
-    /*Object.keys(shapleyData[detailcountry][date].pull).forEach(function() {
-
-    });
-    console.log(labeltext);
-    chartpushpull.data.datasets[0].datalabels = labeltext;
-    console.log(chartpushpull.data.datasets[0].datalabels);
-    console.log(chartpushpull);*/
     chartpushpull.data.datasets[0].labels = Object.keys(shapleyData[detailcountry][date].pull);
     chartpushpull.data.datasets[1].labels = Object.keys(shapleyData[detailcountry][date].push);
     chartpushpull.data.datasets[0].data = changeToNegative(Object.values(shapleyData[detailcountry][date].pull));
@@ -269,13 +267,44 @@ function updateCharts() {
     chartpushpull.update();
 }
 
+// Update conflict timeline chart
+function updateChartConflict() {
+    chartconflict.data.datasets[0].data = [];
+    chartconflict.data.datasets[1].data = [];
+    for (var date in conflictData) {
+        for (var country in conflictData[date]) {
+            if (country == detailcountry) {
+               chartconflict.data.datasets[0].data.push(predictionData[date][country]);
+               chartconflict.data.datasets[1].data.push(conflictData[date][country]);
+            }
+        }
+    }
+    // Sync data = prepend 6 months in proediction
+    if (syncData) {
+        var length = chartconflict.data.datasets[0].data.length;
+        var prepend = [0, 0, 0, 0, 0, 0];
+        chartconflict.data.datasets[0].data = prepend.concat(chartconflict.data.datasets[0].data);
+        chartconflict.data.datasets[0].data = chartconflict.data.datasets[0].data.slice(0, length);
+        //console.log(chartconflict.data.datasets[0].data);
+    }
+    chartconflict.update();
+}
+
 // Show or hide box
 function toggleBox(targetid) {
     var target = document.getElementById(targetid);
     if (target.classList.contains("hidden")) {
         target.classList.remove("hidden");
+        target.style.visibility = 'visible';
+        setTimeout(function() {
+            target.style.opacity = 1;
+        }, 100);
     } else {
-        target.classList.add("hidden");
+        target.style.opacity = 0;
+        setTimeout(function() {
+            target.style.visibility = 'hidden';
+            target.classList.add("hidden");
+        }, 500);
     }
 }
 
@@ -287,15 +316,6 @@ function initCountryList() {
         var countryname = conflictWorldMap.countries[country].name;
         if (country != 'World') {
             countylist += '<li id="' + countrycode + '" data-name="' + countryname + '" data-conflict="" data-prediciton="" onmouseover="conflictWorldMap.over(\'' + countrycode + '\')" onmouseout="conflictWorldMap.out(\'' + countrycode + '\')" onclick="countryListClick(\'' + countrycode + '\')">' + countryname + '</li>';
-        /*if (dayData[countrycode] != undefined && country != 'World') {
-            // Main country
-            //if (dayData[countrycode].provinces == undefined) {
-                countylist += '<li id="' + countrycode + '" data-name="' + countryname + '" data-confirmed="" onmouseover="conflictWorldMap.over(\'' + countrycode + '\')" onmouseout="conflictWorldMap.out(\'' + countrycode + '\')" onclick="countryListClick(\'' + countrycode + '\')">' + countryname + '</li>';
-            // Province
-            //} else {
-                //for (var province in dayData[countrycode].provinces) {
-                //}
-            //}
         /*} else {
             console.log('No data: ' + countrycode + ' / ' + countryname);*/
         }
@@ -311,7 +331,7 @@ function updateCountryList() {
         for (var country in conflictWorldMap.countries) {
             var countrycode = conflictWorldMap.countries[country].id;
             if (conflictData[date][countrycode] != undefined) {
-                // Add conflict to countrylist
+                // Add conflict to countrylist, TODO: Put into initCountryList()?
                 if (document.getElementById(countrycode) != null) {
                     var conflictday = conflictData[date][countrycode];
                     var predicitonday = predictionData[date][countrycode];
@@ -396,30 +416,9 @@ function mapClick(path) {
         }
         detailcountry = countryid;
         loadShapleyData();
-        // Update conflict chart
-        chartconflict.data.datasets[0].data = [];
-        chartconflict.data.datasets[1].data = [];
-        for (var date in conflictData) {
-            for (var country in conflictData[date]) {
-                if (country == detailcountry) {
-                   chartconflict.data.datasets[0].data.push(predictionData[date][country]);
-                   chartconflict.data.datasets[1].data.push(conflictData[date][country]);
-                }
-            }
-        }
-        chartconflict.update();
-        // Update country chart
-        /*chartcountry.data.datasets[0].data = [];
-        chartcountry.data.datasets[1].data = [];
-        for (var date in conflictData) {
-            for (var country in conflictData[date]) {
-                if (country == detailcountry) {
-                   chartcountry.data.datasets[0].data.push(predictionData[date][country]);
-                   chartcountry.data.datasets[1].data.push(conflictData[date][country]);
-                }
-            }
-        }
-        chartcountry.update();*/
+        chartconflict.options.animation.duration = 1000; // Animate lines
+        updateChartConflict();
+        chartconflict.options.animation.duration = 0; // Don't animate lines
     }
 }
 
@@ -433,8 +432,47 @@ function clickInfo() {
             document.getElementById('details').classList.add("hidden");
         }
     }
+    toggleBox('overlay');
     toggleBox('info');
     //toggleBox('logo');
+    // Fadein with opacity 
+    document.getElementById('details').style.visibility = 'visible';
+    document.getElementById('settings').style.visibility = 'visible';
+    document.getElementById('countries').style.visibility = 'visible';
+    document.getElementById('conflicts').style.visibility = 'visible';
+    document.getElementById('svg-world-map-container').style.visibility = 'visible';
+    setTimeout(function() {
+        document.getElementById('details').style.opacity = 1;
+        document.getElementById('settings').style.opacity = 1;
+        document.getElementById('countries').style.opacity = 1;
+        document.getElementById('conflicts').style.opacity = 1;
+        document.getElementById('svg-world-map-container').style.opacity = 1;
+    }, 200);
+}
+
+// Show prediction on map
+function showPrediction() {
+    /*console.log('yoli 1');
+    console.log(conflictWorldMap);
+    console.log(conflictWorldMap.timeData);
+    console.log(Object.keys(conflictWorldMap.timeData).length);
+    colorData = JSON.parse(JSON.stringify(predictionData)); // Copy prediction object 
+    for (var date in predictionData) {
+        for (var country in predictionData[date]) {
+            var value = predictionData[date][country] * 255;
+            var rgb = 'rgb(' + (255-value) + ',' + (255-value) + ',' + (255-value) + ')';
+            colorData[date][country] = rgb;
+        }
+    }
+    console.log(colorData);
+    conflictWorldMap.timeData = colorData;
+    console.log(conflictWorldMap.timeData);*/
+}
+
+// Sync prediction with ground truth
+function syncPrediction() {
+    syncData = document.getElementById('predsync').checked;
+    updateChartConflict();
 }
 
 // Chart legend padding
@@ -482,6 +520,7 @@ function initCharts() {
     var chartLabel;
     // Options for conflict charts
     var chartoptions = { 
+        animation: { duration: 0 }, 
         maintainAspectRatio: false, 
         legend: { /*position: 'bottom',*/ labels: { usePointStyle: true, fontColor: "#666666", fontSize: 11 } }, /*reverse: true,*/
         elements: { point:{ radius: 0 } }, 
@@ -592,7 +631,7 @@ function initCharts() {
         data: {
             labels: [],
             datasets: [{
-                label: 'Conflict Prediction (6 months ahead)',
+                label: 'Probability of Conflict (6 months ahead)',
                 yAxisID: 'CP',
                 data: [],
                 borderWidth: 1,
