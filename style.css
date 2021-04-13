@@ -15,6 +15,12 @@ body {
     font-size: 13px;
 }
 
+body.dark {
+    background-color: #262626; 
+    filter: invert(90%);
+    transition: all 1s;
+}
+
 a {
     cursor: pointer;
     color: #db3232;
@@ -57,7 +63,7 @@ ul li {
 }
 
 .top {
-    font-size: 16px;
+    font-size: 20px;
 }
 
 .center {
@@ -156,6 +162,7 @@ ul li {
 
 .chart.high {
     height: 300px;
+    margin: 20px 0;
 }
 
 /* Fade-In elements */
@@ -173,6 +180,7 @@ ul li {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 10;
 }
 
 /* Settings */
@@ -223,14 +231,13 @@ ul li {
 
 #details {
     right: 0;
+    bottom: 0;
     top: 52px;
-    bottom: 52px;
     width: 280px;
     overflow-y: auto;
     text-align: center;
     border-top-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    border-width: 1px 0 1px 1px;
+    border-width: 1px 0 0 1px;
 }
 
 #worldstats .big, #countrystats .big {
@@ -272,7 +279,6 @@ ul li {
 }*/
 
 #pushpullinfo table, #countryinfo table {
-    margin-bottom: 20px;
     width: 100%;
     text-align: left;
 }
@@ -290,50 +296,8 @@ ul li {
     overflow: hidden;
 }
 
-/* Logo */
-
-#logo {
-    position: fixed;
-    top: 15vh;
-    width: 276px;
-    left: calc(50vw - 188px); /* 276/2 + 50 */
-    font-weight: bold;
-    text-align: center;
-    margin: 5px 0;
-}
-
-#logo .big {
-    font-style: italic;
-    background-color: rgba(50, 50, 50, .9);
-    /*border: 2px solid rgba(240, 240, 240, 0.3);*/
-    border: 2px solid #808080;
-    box-shadow: 0px 0px 1px 2px rgba(50, 50, 50, .9);
-    border-radius: 35px;
-    width: 270px;
-    height: 40px;
-    font-size: 25px;
-    margin-top: -5px;
-    letter-spacing: -2px;
-}
-
-#logo .big .green {
-    margin-left: -6px;
-}
-
-#logo .big .red {
-    margin-left: -6px;
-}
-
-#logo .small.top {
-    font-size: 11px;
-    height: 18px;
-    padding: 0px 7px 1px;
-    transform: skew(-20deg);
-    border-radius: 5px;
-    background-color: #808080;
-    display: inline-block;
-   /*box-shadow: 0px 0px 1px 2px rgba(50, 50, 50, .85);
-    opacity: .9;*/
+#pushpullinfo table tr td::first-letter {
+    text-transform: capitalize;
 }
 
 /* Help, info & loading */
@@ -362,6 +326,7 @@ ul li {
     border-radius: 3px;
     overflow-y: scroll;
     padding: 20px;
+    z-index: 20;
 }
 
 #info .bgbox:last-child {
@@ -428,13 +393,12 @@ ul li {
 
 #countrylist {
     left: 0;
+    bottom: 0;
     top: 52px;
-    bottom: 52px;
     width: 180px;
     overflow-y: auto;
     border-top-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-    border-width: 1px 1px 1px 0;
+    border-width: 1px 1px 0 0;
 }
 
 #countrylist ul li {
@@ -462,6 +426,12 @@ ul li {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     border-width: 1px 1px 0 1px;
+    z-index: 0;
+}
+
+#conflictinfo {
+	width: 300px;
+	margin: auto;
 }
 
 /* Controls */
@@ -485,10 +455,13 @@ ul li {
 }
 
 #map-control-buttons {
-    left: 0;
     width: 180px !important;
-    border-top-right-radius: 3px;
-    border-width: 1px 1px 0 0;
+	background: none !important;
+	border: none !important;
+	left: 230px;
+	bottom: 215px !important;
+    z-index: 1;
+    opacity: 0;
 }
 
 #map-slider::-webkit-slider-thumb, #map-slider::-moz-range-thumb { 
@@ -506,15 +479,16 @@ ul li {
 }
 
 #map-date {
-    right: 0;
-    width: 280px !important;
-    height: 45px;
-    float: left;
-    border-top-left-radius: 3px;
-    padding: 5px 10px 0;
-    text-align: center !important;
-    font-size: 30px;
-    border-width: 1px 0 0 1px;
+	right: 350px;
+	width: auto !important;
+	float: left;
+	font-size: 20px;
+	border: none;
+	bottom: 220px !important;
+	color: #666 !important;
+	background: none !important;
+	z-index: 1;
+    opacity: 0;
 }
 
 #map-controls button {
@@ -534,9 +508,12 @@ ul li {
 }
 
 #map-speed-controls {
-    display: none;
-    float: left;
-    margin-left: 50px;
+	position: fixed;
+	width: auto !important;
+	bottom: 230px;
+	left: 415px;
+	z-index: 1;
+    opacity: 0;
 }
 
 #map-slower, #map-faster {

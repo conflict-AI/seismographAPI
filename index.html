@@ -70,13 +70,22 @@
         </div>
         <!-- Conflict graph -->
         <div id="conflicts" class="box hidden">
-            <span id="countrytitlebottom" class="big top center"></span>
-            <span id="countrytitleinfo" class="small center">(click a country for details)</span>
-            <div id="mapsync" class="small center">
-                <!--<input type="checkbox" id="predmap" name="predmap" onclick="showPrediction()">
-                <label for="predmap">Show prediction on map</label>-->
-                <input type="checkbox" id="predsync" name="predsync" onclick="syncPrediction()">
-                <label for="predsync">Sync prediction with ground truth</label>
+            <div id="conflictinfo">
+                <span id="countrytitlebottom" class="big top center"></span>
+                <span id="countrytitleinfo" class="small center">(click a country for details)</span>
+                <div id="mapsync" class="small center">
+                    <!--<input type="checkbox" id="predmap" name="predmap" onclick="showPrediction()">
+                    <label for="predmap">Show prediction on map</label>-->
+                    <span>
+                        <input type="checkbox" id="predsync" name="predsync" onclick="syncPrediction()">
+                        <label for="predsync">Sync prediction with ground truth</label>
+                    </span>
+                    &nbsp; 
+                    <span>
+                        <input type="checkbox" id="darkmode" name="darkmode" onclick="toggleDarkMode()">
+                        <label for="darkmode">Dark mode</label>
+                    </span>
+                </div>
             </div>
             <div class="chart big">
                 <canvas id="conflictcanvas"></canvas>

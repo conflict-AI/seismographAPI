@@ -63,7 +63,7 @@ function initStartup() {
 async function loadSVGMap() {
     // Custom options
     var options = { 
-        //libPath: '//conflict-ai.org/map/src/', // Point to /src-folder 
+        libPath: location.hostname == 'localhost' ? '../src/' : '//conflict-ai.org/map/src/', // Point to /src-folder 
         bigMap: false, // Use small map
         showOcean: false, // Show or hide ocean layer
         showAntarctica: false, // Show or hide antarctic layer
@@ -109,6 +109,7 @@ function initSVGMap() {
         }
         // Uncheck checkbox
         document.getElementById('predsync').checked = false;
+        document.getElementById('darkmode').checked = false;
         // Hide loading and show boxes and map after startup
         toggleBox('loading');
         toggleBox('settings');
@@ -131,6 +132,13 @@ function initSVGMap() {
             document.getElementById('countries').style.opacity = 1;
             document.getElementById('conflicts').style.opacity = 1;
             document.getElementById('svg-world-map-container').style.opacity = 1;
+            setTimeout(function() {
+                document.getElementById('map-control-buttons').style.opacity = 1;
+                document.getElementById('map-date').style.opacity = 1;
+                setTimeout(function() {
+                    document.getElementById('map-speed-controls').style.opacity = 1;
+                }, 200);
+            }, 400);
         }, 200);
     }
 }
@@ -231,7 +239,7 @@ function updateDetails() {
         countryinfo += '<tr><td>Country</td><td><b>' + document.getElementById('countrytitlebottom').innerHTML + '</b></td></tr>';
         countryinfo += '<tr><td>Date</td><td><b>' + date + '</b></td></tr>';
         countryinfo += '<tr><td>Probability of Conf.<br><small>(+6 months)</small></td><td><b>' + predictionData[date][detailcountry] + '</b></td></tr>';
-        countryinfo += '<tr><td>Conflict Intensity<br><small>(Ground Truth)</small></td><td><b>' + conflictData[date][detailcountry] + '</b></td></tr>';
+        countryinfo += '<tr><td>Conflict Intensity<br><small>(ground truth)</small></td><td><b>' + conflictData[date][detailcountry] + '</b></td></tr>';
         countryinfo += '</table>';
         document.getElementById('countryinfo').innerHTML = countryinfo;
     }
@@ -475,6 +483,15 @@ function syncPrediction() {
     updateChartConflict();
 }
 
+// Switch to dark mode
+function toggleDarkMode() {
+    if (document.getElementById('darkmode').checked) {
+        document.getElementsByTagName('body')[0].classList.add('dark');
+    } else {
+        document.getElementsByTagName('body')[0].classList.remove('dark');
+    }
+}
+
 // Chart legend padding
 Chart.Legend.prototype.afterFit = function() {
     this.height = this.height + 10;
@@ -637,7 +654,7 @@ function initCharts() {
                 borderWidth: 1,
                 backgroundColor: 'rgba(128, 128, 128, .3)'
             }, {
-                label: 'Composite Conflict Intensity (Ground Truth)',
+                label: 'Composite Conflict Intensity (ground truth)',
                 yAxisID: 'CG',
                 data: [],
                 borderWidth: 1,
