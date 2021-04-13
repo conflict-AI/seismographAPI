@@ -1,53 +1,86 @@
-	/*
-  	Flaticon icon font: Flaticon
-  	Creation date: 04/04/2020 20:39
-  	*/
-
 @font-face {
-  font-family: "Flaticon";
-  src: url("./Flaticon.eot");
-  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
-       url("./Flaticon.woff2") format("woff2"),
-       url("./Flaticon.woff") format("woff"),
-       url("./Flaticon.ttf") format("truetype"),
-       url("./Flaticon.svg#Flaticon") format("svg");
-  font-weight: normal;
-  font-style: normal;
+    font-family: "flaticon";
+    src: url("./flaticon.ttf?331de545205929a4ef07c6f6a371c0c3") format("truetype"),
+url("./flaticon.woff?331de545205929a4ef07c6f6a371c0c3") format("woff"),
+url("./flaticon.woff2?331de545205929a4ef07c6f6a371c0c3") format("woff2"),
+url("./flaticon.eot?331de545205929a4ef07c6f6a371c0c3#iefix") format("embedded-opentype"),
+url("./flaticon.svg?331de545205929a4ef07c6f6a371c0c3#flaticon") format("svg");
 }
 
-/*@media screen and (-webkit-min-device-pixel-ratio:0) {
-  @font-face {
-    font-family: "Flaticon";
-    src: url("./Flaticon.svg#Flaticon") format("svg");
-  }
-}*/
-
-[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
-[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
-  font-family: Flaticon;
-        font-size: 20px;
-font-style: normal;
-margin-left: 20px;
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.flaticon-play:before { content: "\f100"; }
-.flaticon-pause:before { content: "\f101"; }
-.flaticon-fast-forward:before { content: "\f102"; }
-.flaticon-rewind:before { content: "\f103"; }
-.flaticon-skip:before { content: "\f104"; }
-.flaticon-previous:before { content: "\f105"; }
-.flaticon-menu:before { content: "\f106"; }
-.flaticon-chart:before { content: "\f107"; }
-.flaticon-settings:before { content: "\f108"; }
-.flaticon-plus:before { content: "\f109"; }
-.flaticon-minus:before { content: "\f10a"; }
-.flaticon-cross:before { content: "\f10b"; }
-.flaticon-expand:before { content: "\f10c"; }
-.flaticon-search:before { content: "\f10d"; }
-.flaticon-zoom-in:before { content: "\f10e"; }
-.flaticon-zoom-out:before { content: "\f10f"; }
-.flaticon-globe:before { content: "\f110"; }
-.flaticon-question:before { content: "\f111"; }
-.flaticon-right-down:before { content: "\f112"; }
-.flaticon-right-up:before { content: "\f113"; }
-.flaticon-right:before { content: "\f114"; }
+.flaticon-chart:before {
+    content: "\f101";
+}
+.flaticon-contrast:before {
+    content: "\f102";
+}
+.flaticon-cross:before {
+    content: "\f103";
+}
+.flaticon-expand:before {
+    content: "\f104";
+}
+.flaticon-fast-forward:before {
+    content: "\f105";
+}
+.flaticon-globe:before {
+    content: "\f106";
+}
+.flaticon-menu:before {
+    content: "\f107";
+}
+.flaticon-minus:before {
+    content: "\f108";
+}
+.flaticon-pause:before {
+    content: "\f109";
+}
+.flaticon-play:before {
+    content: "\f10a";
+}
+.flaticon-plus:before {
+    content: "\f10b";
+}
+.flaticon-previous:before {
+    content: "\f10c";
+}
+.flaticon-question:before {
+    content: "\f10d";
+}
+.flaticon-rewind:before {
+    content: "\f10e";
+}
+.flaticon-right-down:before {
+    content: "\f10f";
+}
+.flaticon-right-up:before {
+    content: "\f110";
+}
+.flaticon-right:before {
+    content: "\f111";
+}
+.flaticon-search:before {
+    content: "\f112";
+}
+.flaticon-settings:before {
+    content: "\f113";
+}
+.flaticon-skip:before {
+    content: "\f114";
+}
+.flaticon-zoom-in:before {
+    content: "\f115";
+}
+.flaticon-zoom-out:before {
+    content: "\f116";
+}

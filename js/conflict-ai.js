@@ -63,7 +63,7 @@ function initStartup() {
 async function loadSVGMap() {
     // Custom options
     var options = { 
-        libPath: location.hostname == 'localhost' ? '../src/' : '//conflict-ai.org/map/src/', // Point to /src-folder 
+        libPath: location.hostname == 'localhost' ? 'src/' : '//conflict-ai.org/map/src/', // Point to /src-folder 
         bigMap: false, // Use small map
         showOcean: false, // Show or hide ocean layer
         showAntarctica: false, // Show or hide antarctic layer
@@ -109,7 +109,6 @@ function initSVGMap() {
         }
         // Uncheck checkbox
         document.getElementById('predsync').checked = false;
-        document.getElementById('darkmode').checked = false;
         // Hide loading and show boxes and map after startup
         toggleBox('loading');
         toggleBox('settings');
@@ -236,10 +235,9 @@ function updateDetails() {
     }
     if (predictionData[date] != undefined) {
         var countryinfo = '<table>';
-        countryinfo += '<tr><td>Country</td><td><b>' + document.getElementById('countrytitlebottom').innerHTML + '</b></td></tr>';
-        countryinfo += '<tr><td>Date</td><td><b>' + date + '</b></td></tr>';
-        countryinfo += '<tr><td>Probability of Conf.<br><small>(+6 months)</small></td><td><b>' + predictionData[date][detailcountry] + '</b></td></tr>';
-        countryinfo += '<tr><td>Conflict Intensity<br><small>(ground truth)</small></td><td><b>' + conflictData[date][detailcountry] + '</b></td></tr>';
+        countryinfo += '<tr><td><b>' + document.getElementById('countrytitlebottom').innerHTML + '</b></td><td><b>' + date + '</b></td></tr>';
+        countryinfo += '<tr><td>Probability of Conf.<br><small>(+6 months)</small></td><td>Conflict Intensity<br><small>(ground truth)</small></td></tr>';
+        countryinfo += '<tr><td><b>' + predictionData[date][detailcountry] + '</b></td><td><b>' + conflictData[date][detailcountry] + '</b></td></tr>';
         countryinfo += '</table>';
         document.getElementById('countryinfo').innerHTML = countryinfo;
     }
@@ -431,7 +429,7 @@ function mapClick(path) {
 }
 
 // Click info button
-function clickInfo() {
+function toggleInfo() {
     if (smallScreen != false) {
         if (document.getElementById('countries').classList.contains("hidden") == false) {
             document.getElementById('countries').classList.add("hidden");
@@ -485,10 +483,10 @@ function syncPrediction() {
 
 // Switch to dark mode
 function toggleDarkMode() {
-    if (document.getElementById('darkmode').checked) {
-        document.getElementsByTagName('body')[0].classList.add('dark');
-    } else {
+    if (document.getElementsByTagName('body')[0].classList.contains('dark')) {
         document.getElementsByTagName('body')[0].classList.remove('dark');
+    } else {
+        document.getElementsByTagName('body')[0].classList.add('dark');
     }
 }
 
@@ -708,6 +706,7 @@ function initCharts() {
             },
             title: {
                 display: true,
+                fontSize: 13,
                 text: 'Pull factors                Push factors'
             },
             tooltips: false,

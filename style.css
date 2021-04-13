@@ -11,14 +11,14 @@ body {
     font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
     /*background-color: rgb(135, 177, 179);*/
     margin: 0;
-    background-color: #EFEFEF; /*#8AB1B4*/
     font-size: 13px;
+    background-color: #EFEFEF; /*#8AB1B4*/
+    transition: filter 1s, background-color 1s;
 }
 
 body.dark {
     background-color: #262626; 
     filter: invert(90%);
-    transition: all 1s;
 }
 
 a {
@@ -37,7 +37,7 @@ button {
 }
 
 h3 {
-    margin: 0;
+    margin: 0 0 10px;
     padding: 0;
 }
 
@@ -50,6 +50,15 @@ ul li {
     list-style: none;
     padding: 5px 0;
     /*line-height: 22px;*/
+}
+
+table {
+    margin: 0;
+    padding: 0;
+}
+
+table td {
+    vertical-align: top;
 }
 
 /* Classes */
@@ -208,7 +217,7 @@ ul li {
 }
 
 #settings button i {
-    margin: 3px;
+    margin: 3px 2px;
 }
 
 #settings button i::before, #info button i::before {
@@ -280,7 +289,6 @@ ul li {
 
 #pushpullinfo table, #countryinfo table {
     width: 100%;
-    text-align: left;
 }
 
 #pushpullinfo table td, #countryinfo table td {
@@ -289,6 +297,8 @@ ul li {
 
 #pushpullinfo table {
     margin-top: 20px;
+    width: 100%;
+    text-align: left;
 }
 
 #pushpullinfo table tr td:first-child {
@@ -318,6 +328,22 @@ ul li {
     margin-left: 15px;
 }
 
+#about {
+    position: fixed;
+    right: 360px;
+    bottom: 253px;
+    font-size: 20px;
+}
+
+#about i {
+    vertical-align: middle;
+    padding-top: 1px;
+}
+
+#about i::before {
+    font-size: 17px;
+}
+
 #info {
     top: 5vh;
     bottom: 5vh;
@@ -340,6 +366,24 @@ ul li {
 #info button.close i {
     position: fixed;
     margin-left: -35px;
+	background-color: #fff;
+	padding: 5px 5px 2px;
+	border-radius: 5px;
+}
+
+#info button.close i::before {
+    margin: 0;
+}
+
+#info table {
+	width: 100%;
+	border-top: 1px dotted #444;
+	border-bottom: 1px dotted #444;
+}
+
+#info table tr:not(:first-child) td {
+	padding: 3px 20px 3px 0;
+	border-top: 1px dotted #444;
 }
 
 #loading {
@@ -405,7 +449,7 @@ ul li {
     cursor: pointer;
     padding: 3px 10px;
     border-radius: 4px;
-    max-height: 21px;
+    max-height: 19px;
     overflow: hidden;
 }
 
@@ -459,7 +503,7 @@ ul li {
 	background: none !important;
 	border: none !important;
 	left: 230px;
-	bottom: 215px !important;
+	bottom: 195px !important;
     z-index: 1;
     opacity: 0;
 }
@@ -479,12 +523,12 @@ ul li {
 }
 
 #map-date {
-	right: 350px;
+	left: 236px;
+	bottom: 245px !important;
 	width: auto !important;
 	float: left;
 	font-size: 20px;
 	border: none;
-	bottom: 220px !important;
 	color: #666 !important;
 	background: none !important;
 	z-index: 1;
@@ -510,19 +554,14 @@ ul li {
 #map-speed-controls {
 	position: fixed;
 	width: auto !important;
-	bottom: 230px;
+	bottom: 210px;
 	left: 415px;
 	z-index: 1;
     opacity: 0;
 }
 
-#map-slower, #map-faster {
-    margin-top: 6px;
-}
-
-#map-slower i::before, #map-faster i::before {
-    font-size: 15px;
-    font-weight: bold;
+#map-control-faster {
+    float: left;
 }
 
 #map-infobox span {

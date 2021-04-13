@@ -1,0 +1,113 @@
+$flaticon-font: "flaticon";
+
+@font-face {
+    font-family: $flaticon-font;
+    src: url("./flaticon.ttf?331de545205929a4ef07c6f6a371c0c3") format("truetype"),
+url("./flaticon.woff?331de545205929a4ef07c6f6a371c0c3") format("woff"),
+url("./flaticon.woff2?331de545205929a4ef07c6f6a371c0c3") format("woff2"),
+url("./flaticon.eot?331de545205929a4ef07c6f6a371c0c3#iefix") format("embedded-opentype"),
+url("./flaticon.svg?331de545205929a4ef07c6f6a371c0c3#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+$flaticon-map: (
+    "chart": "\f101",
+    "contrast": "\f102",
+    "cross": "\f103",
+    "expand": "\f104",
+    "fast-forward": "\f105",
+    "globe": "\f106",
+    "menu": "\f107",
+    "minus": "\f108",
+    "pause": "\f109",
+    "play": "\f10a",
+    "plus": "\f10b",
+    "previous": "\f10c",
+    "question": "\f10d",
+    "rewind": "\f10e",
+    "right-down": "\f10f",
+    "right-up": "\f110",
+    "right": "\f111",
+    "search": "\f112",
+    "settings": "\f113",
+    "skip": "\f114",
+    "zoom-in": "\f115",
+    "zoom-out": "\f116",
+);
+
+.flaticon-chart:before {
+    content: map-get($flaticon-map, "chart");
+}
+.flaticon-contrast:before {
+    content: map-get($flaticon-map, "contrast");
+}
+.flaticon-cross:before {
+    content: map-get($flaticon-map, "cross");
+}
+.flaticon-expand:before {
+    content: map-get($flaticon-map, "expand");
+}
+.flaticon-fast-forward:before {
+    content: map-get($flaticon-map, "fast-forward");
+}
+.flaticon-globe:before {
+    content: map-get($flaticon-map, "globe");
+}
+.flaticon-menu:before {
+    content: map-get($flaticon-map, "menu");
+}
+.flaticon-minus:before {
+    content: map-get($flaticon-map, "minus");
+}
+.flaticon-pause:before {
+    content: map-get($flaticon-map, "pause");
+}
+.flaticon-play:before {
+    content: map-get($flaticon-map, "play");
+}
+.flaticon-plus:before {
+    content: map-get($flaticon-map, "plus");
+}
+.flaticon-previous:before {
+    content: map-get($flaticon-map, "previous");
+}
+.flaticon-question:before {
+    content: map-get($flaticon-map, "question");
+}
+.flaticon-rewind:before {
+    content: map-get($flaticon-map, "rewind");
+}
+.flaticon-right-down:before {
+    content: map-get($flaticon-map, "right-down");
+}
+.flaticon-right-up:before {
+    content: map-get($flaticon-map, "right-up");
+}
+.flaticon-right:before {
+    content: map-get($flaticon-map, "right");
+}
+.flaticon-search:before {
+    content: map-get($flaticon-map, "search");
+}
+.flaticon-settings:before {
+    content: map-get($flaticon-map, "settings");
+}
+.flaticon-skip:before {
+    content: map-get($flaticon-map, "skip");
+}
+.flaticon-zoom-in:before {
+    content: map-get($flaticon-map, "zoom-in");
+}
+.flaticon-zoom-out:before {
+    content: map-get($flaticon-map, "zoom-out");
+}
