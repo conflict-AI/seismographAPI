@@ -121,7 +121,7 @@
                 JSON<br>
                 CSV
             </div>
-            <br style="clear: both;"><br>
+            <br><br style="clear: both;"><br>
             <div>
                 <h3>Abstract</h3>
                 Governmental and non-governmental institutions are now deploying neural networks in the prediction of armed conflict due to their strong predictive power. The advent of interpretability methods is making these predictions increasingly explainable, enticing political and military decision-makers to even derive policy recommendations. The degree to which interpretability methods exceed purely predictive decision support gets blurred in this highly secretive and ethically complex setting. Based on 20 years of conflict data on 249 countries and 60 openly available socio-economic and political indicators of monthly granularity, we train a LSTM neural network with an attention mechanism in a time-shifted binary conflict classification task. Based on our high-performing model, we demonstrate, survey and interpret several interpretability methods such as LIME, Anchors, SHAP, CEM and Attention in the context of conflict prediction. We find that explanations provided by these methods are indeed tempting to derive prescriptive policy recommendations, particularly if based on actionable data features. However, feature variables may be endogenous, confounded, collinear or correlated with conflict, making the model “predictive causal" and recommendations “preemptive" at most.<br><br>
@@ -186,55 +186,46 @@
                 Afghanistan, Albania, Algeria, Angola, Argentina, Armenia, Azerbaijan, Bahamas, Bahrain, Bangladesh, Belarus, Belize, Benin, Bolivia, Plurinational State of, Bosnia and Herzegovina, Botswana, Brazil, Bulgaria, Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Central African Republic, Chad, Chile, China, Colombia, Congo, Congo, The Democratic Republic of the, Costa Rica, Croatia, Cuba, Cyprus, Côte d'Ivoire, Djibouti, Dominica, Ecuador, Egypt, El Salvador, Equatorial Guinea, Eritrea, Eswatini, Ethiopia, France, French Guiana, Gabon, Gambia, Georgia, Ghana, Greece, Guadeloupe, Guatemala, Guinea, Guinea-Bissau, Guyana, Haiti, Honduras, India, Indonesia, Iran, Islamic Republic of, Iraq, Israel, Jamaica, Japan, Jordan, Kazakhstan, Kenya, Korea, Democratic People's Republic of, Korea, Republic of, Kuwait, Kyrgyzstan, Lao People's Democratic Republic, Lebanon, Lesotho, Liberia, Libya, Madagascar, Malawi, Malaysia, Mali, Mauritania, Mexico, Moldova, Republic of, Mongolia, Montenegro, Morocco, Mozambique, Myanmar, Namibia, Nepal, Nicaragua, Niger, Nigeria, North Macedonia, Oman, Pakistan, Palestine, State of, Panama, Papua New Guinea, Paraguay, Peru, Philippines, Puerto Rico, Qatar, Romania, Russian Federation, Rwanda, Saint Lucia, Saint Martin (French part), Saudi Arabia, Senegal, Serbia, Sierra Leone, Somalia, South Africa, South Sudan, Sri Lanka, Sudan, Suriname, Syrian Arab Republic, Taiwan, Province of China, Tajikistan, Tanzania, United Republic of, Thailand, Togo, Trinidad and Tobago, Tunisia, Turkey, Turkmenistan, Turks and Caicos Islands, Uganda, Ukraine, United Arab Emirates, Uruguay, Uzbekistan, Venezuela, Bolivarian Republic of, Viet Nam, Yemen, Zambia, Zimbabwe<br><br>
 
                 <h3>Resources</h3>
-                <table>
+                <table class="resources">
                     <tr>
-                        <td rowspan="8"><b>Data</b></td>
+                        <th><b>Data</b></th>
+                        <th><b>Prediction models and interpretability methods</b></th>
+                        <th><b>Interactive Dashboard</b></th>
+                    </tr>
+                    <tr>
                         <td><a href="https://acleddata.com/data-export-tool/" target="_blank">Armed Conflict Location & Event Data (ACLED)</a></td>
+                        <td><a href="https://pytorch.org" target="_blank">PyTorch Python API</a></td>
+                        <td><a href="https://github.com/raphaellepuschitz/SVG-World-Map" target="_blank">SVG World Map JS</a></td>
                     </tr>
                     <tr>
                         <td><a href="https://ucdp.uu.se/downloads/" target="_blank">Uppsala Conflict Data Program Georeferenced Event Dataset (UCDP GED)</a></td>
+                        <td><a href="https://keras.io" target="_blank">Keras Python API</a></td>
+                        <td><a href="https://www.chartjs.org/" target="_blank">Chart.js</a></td>
                     </tr>
                     <tr>
                         <td><a href="https://grid.prio.org" target="_blank">PRIO-GRID</a></td>
+                        <td><a href="https://www.tensorflow.org" target="_blank">TensorFlow Python API</a></td>
+                        <td><a href="https://github.com/ariutta/svg-pan-zoom" target="_blank">SVG pan & zoom library</a></td>
                     </tr>
                     <tr>
                         <td><a href="https://databank.worldbank.org/source/world-development-indicators" target="_blank">World Development Indicators (WDI)</a></td>
+                        <td><a href="https://docs.seldon.io/projects/alibi/en/latest/" target="_blank">Alibi Explain Python API</a></td>
+                        <td rowspan="7"><a href="https://www.flaticon.com/authors/freepik" target="_blank">Flaticon.com</a></td>
                     </tr>
                     <tr>
                         <td><a href="https://databank.worldbank.org/source/worldwide-governance-indicators" target="_blank">World Governance Indicators (WGI)</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://datacatalog.worldbank.org/dataset/country-policy-and-institutional-assessment" target="_blank">Country Policy And Institutional Assessment Data (CPIA)</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://www.sipri.org/databases/milex" target="_blank">Military Expenditure Database (SIPRI)</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://www.unhcr.org/refugee-statistics/" target="_blank">UNHCR’s Refugee Population Statistics Database</a></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="10"><b>Prediction models and interpretability methods</b></td>
-                        <td><a href="https://pytorch.org" target="_blank">PyTorch Python API</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://keras.io" target="_blank">Keras Python API</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://www.tensorflow.org" target="_blank">TensorFlow Python API</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://docs.seldon.io/projects/alibi/en/latest/" target="_blank">Alibi Explain Python API</a></td>
-                    </tr>
-                    <tr>
                         <td><a href="https://github.com/slundberg/shap" target="_blank">SHAP Python API</a></td>
                     </tr>
                     <tr>
+                        <td><a href="https://datacatalog.worldbank.org/dataset/country-policy-and-institutional-assessment" target="_blank">Country Policy And Institutional Assessment Data (CPIA)</a></td>
                         <td><a href="https://www.scipy.org" target="_blank">SciPy Python API</a></td>
                     </tr>
                     <tr>
+                        <td><a href="https://www.sipri.org/databases/milex" target="_blank">Military Expenditure Database (SIPRI)</a></td>
                         <td><a href="hhttps://scikit-learn.org/stable/" target="_blank">Sklearn Python API</a></td>
                     </tr>
                     <tr>
+                        <td rowspan="3"><a href="https://www.unhcr.org/refugee-statistics/" target="_blank">UNHCR’s Refugee Population Statistics Database</a></td>
                         <td><a href="https://numpy.org" target="_blank">numpy Python API</a></td>
                     </tr>
                     <tr>
@@ -242,19 +233,6 @@
                     </tr>
                     <tr>
                         <td><a href="https://www.statsmodels.org/stable/index.html" target="_blank">statsmodels Python API</a></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="4"><b>Interactive Dashboard</b></td>
-                        <td><a href="https://github.com/raphaellepuschitz/SVG-World-Map" target="_blank">SVG World Map JS</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://github.com/ariutta/svg-pan-zoom" target="_blank">SVG pan & zoom library</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://www.chartjs.org/" target="_blank">Chart.js</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="https://www.flaticon.com/authors/freepik" target="_blank">Flaticon.com</a></td>
                     </tr>
                 </table><br>
 

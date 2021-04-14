@@ -148,7 +148,7 @@ table td {
 }
 
 .col-4 {
-    width: 21.5%;
+    width: 21%;
     float: left;
     margin: 0 2% 0 0 !important;
 }
@@ -377,6 +377,7 @@ table td {
 
 #info table {
 	width: 100%;
+    text-align: left;
 	border-top: 1px dotted #444;
 	border-bottom: 1px dotted #444;
 }
@@ -384,6 +385,21 @@ table td {
 #info table tr:not(:first-child) td {
 	padding: 3px 20px 3px 0;
 	border-top: 1px dotted #444;
+}
+
+#info table.resources {
+	border-top: 1px dotted #444;
+	border-bottom: none;
+}
+
+#info table.resources th {
+	padding: 3px 0;
+    vertical-align: top;
+	border-bottom: 1px dotted #444;
+}
+
+#info table.resources tr td {
+	border-top: none;
 }
 
 #loading {
@@ -449,7 +465,8 @@ table td {
     cursor: pointer;
     padding: 3px 10px;
     border-radius: 4px;
-    max-height: 19px;
+    max-height: 18px;
+    line-height: 25px;
     overflow: hidden;
 }
 
@@ -571,11 +588,30 @@ table td {
 
 /* Responsive breakpoints */
 
-@media all and (max-width: 999px) {
+@media all and (max-width: 1200px) {
 
-    .big {
-        font-size: 15px;
+    .col-4 {
+        width: 19%;
     }
+
+    .big, #map-date, #about {
+        font-size: 15px !important;
+    }
+
+    #about {
+        right: 320px !important;
+        bottom: 262px !important;
+    }
+
+    #map-date {
+        left: 50px !important;
+        bottom: 249px !important;
+        display: none;
+    }
+
+}
+
+@media all and (max-width: 999px) {
 
     #settings {
         width: 100%;
@@ -654,6 +690,10 @@ table td {
         font-size: 20px;
         border-top-left-radius: 0;
         border-top-right-radius: 3px;
+    }
+
+    #map-control-buttons, #map-speed-controls {
+        display: none;
     }
 
     @media all and (orientation: portrait) {
