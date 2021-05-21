@@ -1,4 +1,40 @@
 
+// Load CSS
+document.getElementsByTagName('head')[0].insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="src/seismographAPI.css" />');
+
+
+// Load JS
+const loadScript = src => {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.onload = resolve;
+        script.onerror = reject
+        script.src = src;
+        document.head.append(script);
+    });
+}
+
+loadScript('lib/svg-world-map.js')
+.then(() => loadScript('lib/svg-pan-zoom.min.js'))
+.then(() => loadScript('lib/chart.min.js'))
+.then(() => loadScript('lib/chartjs-plugin-datalabels.js'))
+//.then(() => loadScript('src/conflict-ai.js'))
+.then(() => {
+    //console.log('yoli!');
+    // Init Chart.js options
+    InitChartOptions();
+    // Startup 
+    checkSize();
+    checkMobile();
+    loadConflictData();
+    initStartup();
+    initCharts();
+// now safe to use jQuery and jQuery UI, which depends on jQuery
+}).catch(() => console.error('Something went wrong.'));
+
+
+
 // Global variables
 var mapSVG; 
 var svgInit = false;
@@ -18,11 +54,11 @@ var isMobile = false;
 var day = 0;
 
 // Startup 
-checkSize();
+/*checkSize();
 checkMobile();
 loadConflictData();
 initStartup();
-initCharts();
+initCharts();*/
 
 // Wait untill everything is fully loaded
 function initStartup() {
@@ -63,7 +99,7 @@ function initStartup() {
 async function loadSVGMap() {
     // Custom options
     var options = { 
-        libPath: location.hostname == 'localhost' ? 'src/' : '//conflict-ai.org/map/src/', // Point to /src-folder 
+        libPath: location.hostname == 'localhost' ? 'lib/' : '//conflict-ai.org/map/src/', // Point to /src-folder 
         bigMap: false, // Use small map
         showOcean: false, // Show or hide ocean layer
         showAntarctica: false, // Show or hide antarctic layer
@@ -155,11 +191,11 @@ function mapDate(updateDate) {
 // Wait for JSON load and pass data to library 
 function loadConflictData() {
    loadShapleyData();
-    var conflictJson = "data/conflict_gt.json";
+    var conflictJson = "data/conflict/conflict_gt.json";
     loadFile(conflictJson, function(conflictResponse) {
         conflictData = JSON.parse(conflictResponse); 
         initColorData();
-        var predictionJson = "data/conflict_pred.json";
+        var predictionJson = "data/conflict/conflict_pred.json";
         loadFile(predictionJson, function(predictionResponse) {
             predictionData = JSON.parse(predictionResponse);
             initConflictData();
@@ -171,7 +207,7 @@ function loadConflictData() {
 function loadShapleyData() {
     //console.log(detailcountry);
     if (shapleyData[detailcountry] == undefined) {
-        var shapleyJson = "data/" + detailcountry + ".json";
+        var shapleyJson = "data/conflict/" + detailcountry + ".json";
         //console.log(shapleyJson);
         loadFile(shapleyJson, function(shapleyResponse) {
             //console.log(shapleyResponse);
@@ -490,45 +526,46 @@ function toggleDarkMode() {
     }
 }
 
-// Chart legend padding
-Chart.Legend.prototype.afterFit = function() {
-    this.height = this.height + 10;
-};
+// Chart.js options
+function InitChartOptions() {
 
-// Tooltip position
-Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
-    //var tooltip = this;
-    //console.log(elements);
-    //console.log(eventPosition);
-    return {
-        x: eventPosition.x,
-        y: 0
+    // Chart legend padding
+    Chart.Legend.prototype.afterFit = function() {
+        this.height = this.height + 10;
     };
-};
 
-// Chart vertical line
-var originalLineDraw = Chart.controllers.line.prototype.draw;
-Chart.helpers.extend(Chart.controllers.line.prototype, {
-    draw: function() {
-        originalLineDraw.apply(this, arguments);
-        var chart = this.chart;
-        var ctx = chart.chart.ctx;
-        var index = chart.config.data.lineAtIndex;
-        if (index) {
-            var xaxis = chart.scales['x-axis-0'];
-            //var yaxis = chart.scales['y-axis-0'];
-            var yaxis = chart.scales['CP'];
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(xaxis.getPixelForValue(undefined, index), yaxis.top);
-            ctx.strokeStyle = '#666666';
-            ctx.lineWidth = 1;
-            ctx.lineTo(xaxis.getPixelForValue(undefined, index), yaxis.bottom);
-            ctx.stroke();
-            ctx.restore();
+    // Tooltip position
+    Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
+        return {
+            x: eventPosition.x,
+            y: 0
+        };
+    };
+
+    // Chart vertical line
+    var originalLineDraw = Chart.controllers.line.prototype.draw;
+    Chart.helpers.extend(Chart.controllers.line.prototype, {
+        draw: function() {
+            originalLineDraw.apply(this, arguments);
+            var chart = this.chart;
+            var ctx = chart.chart.ctx;
+            var index = chart.config.data.lineAtIndex;
+            if (index) {
+                var xaxis = chart.scales['x-axis-0'];
+                //var yaxis = chart.scales['y-axis-0'];
+                var yaxis = chart.scales['CP'];
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(xaxis.getPixelForValue(undefined, index), yaxis.top);
+                ctx.strokeStyle = '#666666';
+                ctx.lineWidth = 1;
+                ctx.lineTo(xaxis.getPixelForValue(undefined, index), yaxis.bottom);
+                ctx.stroke();
+                ctx.restore();
+            }
         }
-    }
-});
+    });
+}
 
 // Chart init
 function initCharts() {
