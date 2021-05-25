@@ -24,9 +24,9 @@
         </div>
         <!-- Settings -->
         <div id="settings" class="box hidden">
-            <button onclick="svgPanZoom.zoomIn()"><i class="flaticon-zoom-in"></i></button>
-            <button onclick="svgPanZoom.zoomOut()"><i class="flaticon-zoom-out"></i></button>
-            <button onclick="conflictWorldMap.labels('all')"><i class="flaticon-globe"></i></button>
+            <button onclick="zoomIn()"><i class="flaticon-zoom-in"></i></button>
+            <button onclick="zoomOut()"><i class="flaticon-zoom-out"></i></button>
+            <button onclick="toggleMapLabels('all')"><i class="flaticon-globe"></i></button>
             <button onclick="toggleDarkMode()"><i class="flaticon-contrast"></i></button>
             <button onclick="toggleBox('countries')"><i class="flaticon-menu"></i></button>
             <button onclick="toggleBox('details')"><i class="flaticon-chart"></i></button>
@@ -242,6 +242,7 @@
         <div id="loading" class="box">~~~ Loading ~~~</div>
         <!-- Scripts -->
         <script src="src/seismographAPI.js"></script>
+        <script>seismographAPI()</script>
         <!--<script src="src/svg-world-map.js"></script>
         <script src="js/svg-pan-zoom.min.js"></script>
         <script src="js/rough.min.js"></script>
