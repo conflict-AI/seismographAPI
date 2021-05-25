@@ -1,6 +1,6 @@
 /**
  * SeismographAPI
- * v0.1.4
+ * v0.1.5
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
@@ -31,17 +31,15 @@
 
     // Main function: SVG map init call, options handling, return the map object
     async function seismographAPI() {
-
         // Load CSS
         document.getElementsByTagName('head')[0].insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="src/seismographAPI.css" />');
-
         // Load JS
         loadScript('lib/svg-world-map.js')
         .then(() => loadScript('lib/svg-pan-zoom.min.js'))
         .then(() => loadScript('lib/chart.min.js'))
         .then(() => loadScript('lib/chartjs-plugin-datalabels.js'))
         .then(() => {
-            // Startup after all is loaded
+            // Startup after all scripts are loaded
             InitChartOptions();
             checkSize();
             checkMobile();
@@ -82,7 +80,7 @@
     async function loadSVGMap() {
         // Custom options
         var options = { 
-            libPath: location.hostname == 'localhost' ? 'lib/' : '//conflict-ai.org/map/src/', // Point to /src-folder 
+            libPath: 'lib/', // Point to lib-folder 
             bigMap: false, // Use small map
             showOcean: false, // Show or hide ocean layer
             showAntarctica: false, // Show or hide antarctic layer
@@ -495,12 +493,10 @@
 
     // Chart.js options
     function InitChartOptions() {
-
         // Chart legend padding
         Chart.Legend.prototype.afterFit = function() {
             this.height = this.height + 10;
         };
-
         // Tooltip position
         Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
             return {
@@ -508,7 +504,6 @@
                 y: 0
             };
         };
-
         // Chart vertical line
         var originalLineDraw = Chart.controllers.line.prototype.draw;
         Chart.helpers.extend(Chart.controllers.line.prototype, {
