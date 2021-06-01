@@ -1,0 +1,146 @@
+
+<div class="center">
+    <h3>Recommendation for Action:</h3>
+    <h1>Neural Network Interpretability in Armed Conflict Prediction</h1>
+    This interactive dashboard is accompanying the paper <a href="">Recommendation for Action: Neural Network Interpretability in Armed Conflict Prediction</a>.<br>
+    It is allowing the reader to explore our historic predictions of conflict alongside the SHAP interpretability method.<br><br>
+</div> 
+<div class="bgbox col-4">
+    <b>Authors:</b><br>
+    Data collection and methodology: will follow<br>
+    Interactive dashboard: will follow
+</div>
+<div class="bgbox col-4">
+    <b>Links:</b><br>
+    Paper: will follow<br>
+    Code: will follow<br>
+    Data: will follow
+</div>
+<div class="bgbox col-4">
+    <b>Please cite:</b><br>
+    will follow
+</div>
+<div class="bgbox col-4">
+    <b>Download data:</b><br>
+    JSON<br>
+    CSV
+</div>
+
+<br><br style="clear: both;"><br>
+
+<div>
+
+<h3>Abstract</h3>
+Governmental and non-governmental institutions are now deploying neural networks in the prediction of armed conflict due to their strong predictive power. The advent of interpretability methods is making these predictions increasingly explainable, enticing political and military decision-makers to even derive policy recommendations. The degree to which interpretability methods exceed purely predictive decision support gets blurred in this highly secretive and ethically complex setting. Based on 20 years of conflict data on 249 countries and 60 openly available socio-economic and political indicators of monthly granularity, we train a LSTM neural network with an attention mechanism in a time-shifted binary conflict classification task. Based on our high-performing model, we demonstrate, survey and interpret several interpretability methods such as LIME, Anchors, SHAP, CEM and Attention in the context of conflict prediction. We find that explanations provided by these methods are indeed tempting to derive prescriptive policy recommendations, particularly if based on actionable data features. However, feature variables may be endogenous, confounded, collinear or correlated with conflict, making the model “predictive causal" and recommendations “preemptive" at most.<br><br>
+
+<h3>Ethics Statement</h3>
+Our interdisciplinary paper bridges the academic disciplines of Machine Learning and Conflict and Peace Studies. The prediction of armed conflict is highly sensitive and context-dependent. Many supra-national and non-governmental institutions rely on computational models for peaceful, humanitarian purposes such as conflict mitigation and prevention. These models play an important role in the compilation of comprehensive state reports, war journalism, assessment of war crime, provision of humanitarian aid and international, jurisprudential decision-making. We would like to contribute to a transparent scholarly debate, rather than leaving ethically complex questions to secretive enterprises or governmental institutions. Even more so, since conflict prediction models are already deployed on a daily basis in real-world applications, despite little scrutiny. Assessment of conflict should strive for more diverse, context-dependent perspectives accounting for psychological, non-lethal, socio-economic damage and other more subtle, but no less important factors. We are aware of the risk of bias within our primary data sources, which are all freely available and funded by US American and European donors. The data does not violate privacy rights by disclosing identifiable individuals. The countries analysed in our study are selected solely based on data availability. Training our models on empirical data, results are at risk of replicating inherent data bias.<br><br>
+
+<h3>Data Features categorised by PMESII</h3>
+
+<table>
+    <tr>
+        <td rowspan="2"><b>Political</b></td>
+        <td>WGI: regulatory quality, government effectiveness, rule of law, political stability, control of corruption</td>
+    </tr>
+    <tr>
+        <td>WDI: disaster risk reduction progress score, social protection rating</td>
+    </tr>
+    <tr>
+        <td rowspan="3"><b>Military</b></td>
+        <td>ACLED: fatalities, violence against civilians, battles, riots, protests, explosions/remote violence, strategic developments</td>
+    </tr>
+    <tr>
+        <td>UCDP GED: state-based conflict, non-state conflict, one-sided violence</td>
+    </tr>
+    <tr>
+        <td>SIPRI: military imports, military exports, arms imports, arms exports</td>
+    </tr>
+    <tr>
+        <td rowspan="2"><b>Economic</b></td>
+        <td>WDI: service imports, goods imports, poverty severity index, gdp per capita, market capitalisation, foreign direct investment, gini index, crop production index, food production index, unemployment rate, ease of doing business, stocks traded, import and export price indexes, CO2 emissions, international tourism, consumer price index, inflation</td>
+    </tr>
+    <tr>
+        <td>Prio-Grid: purchasing power parity</td>
+    </tr>
+    <tr>
+        <td rowspan="2"><b>Social</b></td>
+        <td>WDI: female labor force, gender equality, growth of population, life expectancy</td>
+    </tr>
+    <tr>
+        <td>UNHCR: incoming refugees, outgoing refugees, net migration</td>
+    </tr>
+    <tr>
+        <td rowspan="3"><b>Infrastructure</b></td>
+        <td>WDI: access to electricity, freshwater withdrawals, population density, school enrolment, literacy rate</td>
+    </tr>
+    <tr>
+        <td>CPIA: paved roads, urban land area, rural land area</td>
+    </tr>
+    <tr>
+        <td>Prio-Grid: children mortality, children malnutrition, agricultural area, forestation, drug cultivation, precipitation, night time light emission, gold occurrences, diamond occurrences, air temperature, rain season</td>
+    </tr>
+    <tr>
+        <td rowspan="2"><b>Information</b></td>
+        <td>WGI: voice and accountability, transparency index, transparency of information index</td>
+    </tr>
+    <tr>
+        <td>Prio-Grid: quality of financial information</td>
+    </tr>
+</table><br>
+
+<h3>Data Coverage</h3>
+Conflict event counts and fatality numbers are borrowed from the Armed Conflict Location & Event Data Project (ACLED) and the Uppsala Conflict Data Program Georeferenced Event Dataset (UCDP GED) which are large collections of human-annotated conflict event data. <a href="https://ucdp.uu.se/downloads/ged/ucdp-ged-50-codebook.pdf" target="_blank">UCDP GED</a> dates back to 1989, <a href="https://acleddata.com/acleddatanew/wp-content/uploads/dlm_uploads/2019/01/ACLED_Country-and-Time-Period-Coverage_updFeb2021.pdf" target="_blank">ACLED</a> has continuously increased coverage since 1997. We construct a composite conflict intensity (CCI) incorporating not only fatalities, but also absolute counts of lethal and nonlethal conflict events. The following 141 countries are included in our study:<br><br>
+Afghanistan, Albania, Algeria, Angola, Argentina, Armenia, Azerbaijan, Bahamas, Bahrain, Bangladesh, Belarus, Belize, Benin, Bolivia, Plurinational State of, Bosnia and Herzegovina, Botswana, Brazil, Bulgaria, Burkina Faso, Burundi, Cambodia, Cameroon, Canada, Central African Republic, Chad, Chile, China, Colombia, Congo, Congo, The Democratic Republic of the, Costa Rica, Croatia, Cuba, Cyprus, Côte d'Ivoire, Djibouti, Dominica, Ecuador, Egypt, El Salvador, Equatorial Guinea, Eritrea, Eswatini, Ethiopia, France, French Guiana, Gabon, Gambia, Georgia, Ghana, Greece, Guadeloupe, Guatemala, Guinea, Guinea-Bissau, Guyana, Haiti, Honduras, India, Indonesia, Iran, Islamic Republic of, Iraq, Israel, Jamaica, Japan, Jordan, Kazakhstan, Kenya, Korea, Democratic People's Republic of, Korea, Republic of, Kuwait, Kyrgyzstan, Lao People's Democratic Republic, Lebanon, Lesotho, Liberia, Libya, Madagascar, Malawi, Malaysia, Mali, Mauritania, Mexico, Moldova, Republic of, Mongolia, Montenegro, Morocco, Mozambique, Myanmar, Namibia, Nepal, Nicaragua, Niger, Nigeria, North Macedonia, Oman, Pakistan, Palestine, State of, Panama, Papua New Guinea, Paraguay, Peru, Philippines, Puerto Rico, Qatar, Romania, Russian Federation, Rwanda, Saint Lucia, Saint Martin (French part), Saudi Arabia, Senegal, Serbia, Sierra Leone, Somalia, South Africa, South Sudan, Sri Lanka, Sudan, Suriname, Syrian Arab Republic, Taiwan, Province of China, Tajikistan, Tanzania, United Republic of, Thailand, Togo, Trinidad and Tobago, Tunisia, Turkey, Turkmenistan, Turks and Caicos Islands, Uganda, Ukraine, United Arab Emirates, Uruguay, Uzbekistan, Venezuela, Bolivarian Republic of, Viet Nam, Yemen, Zambia, Zimbabwe<br><br>
+
+<h3>Resources</h3>
+
+<table class="resources">
+    <tr>
+        <th><b>Data</b></th>
+        <th><b>Prediction models and interpretability methods</b></th>
+        <th><b>Interactive Dashboard</b></th>
+    </tr>
+    <tr>
+        <td><a href="https://acleddata.com/data-export-tool/" target="_blank">Armed Conflict Location & Event Data (ACLED)</a></td>
+        <td><a href="https://pytorch.org" target="_blank">PyTorch Python API</a></td>
+        <td><a href="https://github.com/raphaellepuschitz/SVG-World-Map" target="_blank">SVG World Map JS</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://ucdp.uu.se/downloads/" target="_blank">Uppsala Conflict Data Program Georeferenced Event Dataset (UCDP GED)</a></td>
+        <td><a href="https://keras.io" target="_blank">Keras Python API</a></td>
+        <td><a href="https://www.chartjs.org/" target="_blank">Chart.js</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://grid.prio.org" target="_blank">PRIO-GRID</a></td>
+        <td><a href="https://www.tensorflow.org" target="_blank">TensorFlow Python API</a></td>
+        <td><a href="https://github.com/ariutta/svg-pan-zoom" target="_blank">SVG pan & zoom library</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://databank.worldbank.org/source/world-development-indicators" target="_blank">World Development Indicators (WDI)</a></td>
+        <td><a href="https://docs.seldon.io/projects/alibi/en/latest/" target="_blank">Alibi Explain Python API</a></td>
+        <td rowspan="7"><a href="https://www.flaticon.com/authors/freepik" target="_blank">Flaticon.com</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://databank.worldbank.org/source/worldwide-governance-indicators" target="_blank">World Governance Indicators (WGI)</a></td>
+        <td><a href="https://github.com/slundberg/shap" target="_blank">SHAP Python API</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://datacatalog.worldbank.org/dataset/country-policy-and-institutional-assessment" target="_blank">Country Policy And Institutional Assessment Data (CPIA)</a></td>
+        <td><a href="https://www.scipy.org" target="_blank">SciPy Python API</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://www.sipri.org/databases/milex" target="_blank">Military Expenditure Database (SIPRI)</a></td>
+        <td><a href="hhttps://scikit-learn.org/stable/" target="_blank">Sklearn Python API</a></td>
+    </tr>
+    <tr>
+        <td rowspan="3"><a href="https://www.unhcr.org/refugee-statistics/" target="_blank">UNHCR’s Refugee Population Statistics Database</a></td>
+        <td><a href="https://numpy.org" target="_blank">numpy Python API</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://pandas.pydata.org" target="_blank">pandas Python API</a></td>
+    </tr>
+    <tr>
+        <td><a href="https://www.statsmodels.org/stable/index.html" target="_blank">statsmodels Python API</a></td>
+    </tr>
+</table><br>

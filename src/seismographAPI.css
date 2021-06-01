@@ -108,7 +108,8 @@ table td {
     display: none;
 }
 
-.box {
+.box,
+#countries-search, #countries-list, #settings, #details, #timeline, #loading, #info {
     position: fixed;
     padding: 10px;
     /*border: 1px solid #000000;
@@ -123,7 +124,8 @@ table td {
     border: 1px solid #DDDDDD;
 }
 
-.bgbox {
+.bgbox,
+#details-inner {
     padding: 10px;
     margin: 5px 0 20px;
     border-radius: 4px;
@@ -163,7 +165,7 @@ table td {
     margin-bottom: 8px;
 }
 
-.chart.big {
+/*.chart.big {
     margin-top: 10px;
     height: 200px;
     width: 100%;
@@ -172,11 +174,11 @@ table td {
 .chart.high {
     height: 300px;
     margin: 20px 0;
-}
+}*/
 
 /* Fade-In elements */
 
-#svg-world-map-container, #details, #settings, #countries, #conflicts, #overlay, #info {
+#svg-world-map-container, #details, #settings, #countries, #timeline, #overlay, #info {
     /*visibility: hidden;*/
     opacity: 0;
     transition: opacity .5s linear;
@@ -203,21 +205,22 @@ table td {
     border-bottom-left-radius: 3px;
     border-width: 0 0 1px 1px;
     cursor: default;
+    text-align: center;
 }
 
 #settings button {
-    padding: 5px 0;
+    padding: 8px 0 4px;
     border-radius: 3px;
 }
 
-#settings button:hover, #countrylist ul li:hover, #searchcontainer:hover {
+#settings button:hover, #countries-list ul li:hover, #countries-search-inner:hover {
     /*background-color: rgba(112, 109, 107, 0.5);
     background-color: rgba(240, 240, 240, 0.15);*/
     background-color: #EFEFEF;
 }
 
 #settings button i {
-    margin: 3px 2px;
+    margin: 3px 0;
 }
 
 #settings button i::before, #info button i::before {
@@ -247,6 +250,16 @@ table td {
     text-align: center;
     border-top-left-radius: 3px;
     border-width: 1px 0 0 1px;
+}
+
+#details-title {
+    font-size: 20px;
+}
+
+#details-chart {
+    width: 250px;
+    height: 300px;
+    margin: 20px 0;
 }
 
 #worldstats .big, #countrystats .big {
@@ -287,26 +300,26 @@ table td {
     font-size: 15px;
 }*/
 
-#pushpullinfo table, #countryinfo table {
+#details table {
     width: 100%;
 }
 
-#pushpullinfo table td, #countryinfo table td {
+#details table td {
     vertical-align: top;
 }
 
-#pushpullinfo table {
+#details-legend table {
     margin-top: 20px;
     width: 100%;
     text-align: left;
 }
 
-#pushpullinfo table tr td:first-child {
+#details-legend table tr td:first-child {
     width: 20%;
     overflow: hidden;
 }
 
-#pushpullinfo table tr td::first-letter {
+#details-legend table tr td::first-letter {
     text-transform: capitalize;
 }
 
@@ -359,11 +372,11 @@ table td {
     margin-bottom: 0;
 }
 
-#info button.close {
+#info-close {
     float: right;
 }
 
-#info button.close i {
+#info-close i {
     position: fixed;
     margin-left: -35px;
 	background-color: #fff;
@@ -371,7 +384,7 @@ table td {
 	border-radius: 5px;
 }
 
-#info button.close i::before {
+#info-close i::before {
     margin: 0;
 }
 
@@ -412,7 +425,7 @@ table td {
 
 /* Country search */
 
-#countrysearch {
+#countries-search {
     top: 0;
     left: 0;
     height: 30px; /* + 20px padding */
@@ -421,7 +434,7 @@ table td {
     border-width: 0 1px 1px 0;
 }
 
-#searchcontainer {
+#countries-search-inner {
     display: flex;
     width: 100%;
     /*border: 1px solid #666666;
@@ -431,27 +444,28 @@ table td {
     border-radius: 3px;
 }
 
-#searchcontainer i {
+#countries-search-inner i {
     margin: 3px 4px 0 -4px
 }
 
-#searchcontainer i::before {
+#countries-search-inner i::before {
     font-size: 15px;
     margin: 0 10px 0;
 }
 
-#search {
+#countries-search-input {
     background-color: transparent;
     /*color: #CDCDCD;*/
     color: #444444;
     border: none;
+    outline: none;
     font-size: 13px;
     width: 135px;
 }
 
 /* Countries */
 
-#countrylist {
+#countries-list {
     left: 0;
     bottom: 0;
     top: 52px;
@@ -461,22 +475,22 @@ table td {
     border-width: 1px 1px 0 0;
 }
 
-#countrylist ul li {
+#countries-list ul li {
     cursor: pointer;
-    padding: 3px 10px;
+    padding: 3px 10px 5px;
     border-radius: 4px;
-    max-height: 18px;
-    line-height: 25px;
+    /*max-height: 18px;
+    line-height: 25px;*/
     overflow: hidden;
 }
 
-#countrylist ul li .small {
+#countries-list ul li .small {
     margin-right: 5px;
 }
 
-/* Conflicts */
+/* Timeline */
 
-#conflicts {
+#timeline {
     left: 202px;
     right: 302px;
     /*bottom: 52px;*/
@@ -490,9 +504,28 @@ table td {
     z-index: 0;
 }
 
-#conflictinfo {
+#timeline-info {
 	width: 300px;
 	margin: auto;
+}
+
+#timeline-title, #timeline-back {
+    text-align: center;
+    display: block;
+}
+
+#timeline-title {
+    font-size: 20px;
+}
+
+#timeline-back {
+    font-size: 10px;
+}
+
+#timeline-chart {
+    margin-top: 10px;
+    height: 200px;
+    width: 100%;
 }
 
 /* Controls */

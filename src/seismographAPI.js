@@ -1,6 +1,6 @@
 /**
  * SeismographAPI
- * v0.1.5
+ * v0.1.6
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
@@ -40,7 +40,8 @@
         .then(() => loadScript('lib/chartjs-plugin-datalabels.js'))
         .then(() => {
             // Startup after all scripts are loaded
-            InitChartOptions();
+            initUI();
+            initChartOptions();
             checkSize();
             checkMobile();
             loadConflictData();
@@ -129,25 +130,25 @@
             document.getElementById('predsync').checked = false;
             // Hide loading and show boxes and map after startup
             toggleBox('loading');
-            toggleBox('settings');
-            toggleBox('conflicts');
+            //toggleBox('settings');
+            //toggleBox('timeline');
             if (smallScreen != 'landscape') {
-                toggleBox('details'); 
+                //toggleBox('details'); 
             }
-            if (smallScreen == false) {
+            if (smallScreen == true) {
                 toggleBox('countries');
             }
             // Fadein with opacity 
             document.getElementById('details').style.visibility = 'visible';
             document.getElementById('settings').style.visibility = 'visible';
             document.getElementById('countries').style.visibility = 'visible';
-            document.getElementById('conflicts').style.visibility = 'visible';
+            document.getElementById('timeline').style.visibility = 'visible';
             document.getElementById('svg-world-map-container').style.visibility = 'visible';
             setTimeout(function() {
                 document.getElementById('details').style.opacity = 1;
                 document.getElementById('settings').style.opacity = 1;
                 document.getElementById('countries').style.opacity = 1;
-                document.getElementById('conflicts').style.opacity = 1;
+                document.getElementById('timeline').style.opacity = 1;
                 document.getElementById('svg-world-map-container').style.opacity = 1;
                 setTimeout(function() {
                     document.getElementById('map-control-buttons').style.opacity = 1;
@@ -224,20 +225,20 @@
         // Update info
         if (detailCountry == 'World') {
             //document.getElementById('countrytitle').innerHTML =  'World';
-            document.getElementById('countrytitlebottom').innerHTML =  'World';
-            document.getElementById('countrytitleinfo').innerHTML =  '(click a country for details)';
+            document.getElementById('timeline-title').innerHTML =  'World';
+            document.getElementById('timeline-back').innerHTML =  '(click a country for details)';
         } else {
             //document.getElementById('countrytitle').innerHTML = seismographMap.countries[detailCountry].name;
-            document.getElementById('countrytitlebottom').innerHTML = seismographMap.countries[detailCountry].name;
-            document.getElementById('countrytitleinfo').innerHTML =  '(<a onclick="mapClick(\'World\')">back to global view</a>)';
+            document.getElementById('timeline-title').innerHTML = seismographMap.countries[detailCountry].name;
+            document.getElementById('timeline-back').innerHTML =  '(<a onclick="mapClick(\'World\')">back to global view</a>)';
         }
         if (predictionData[date] != undefined) {
             var countryinfo = '<table>';
-            countryinfo += '<tr><td><b>' + document.getElementById('countrytitlebottom').innerHTML + '</b></td><td><b>' + date + '</b></td></tr>';
+            countryinfo += '<tr><td><b>' + document.getElementById('timeline-title').innerHTML + '</b></td><td><b>' + date + '</b></td></tr>';
             countryinfo += '<tr><td>Probability of Conf.<br><small>(+6 months)</small></td><td>Conflict Intensity<br><small>(ground truth)</small></td></tr>';
             countryinfo += '<tr><td><b>' + predictionData[date][detailCountry] + '</b></td><td><b>' + conflictData[date][detailCountry] + '</b></td></tr>';
             countryinfo += '</table>';
-            document.getElementById('countryinfo').innerHTML = countryinfo;
+            document.getElementById('details-info').innerHTML = countryinfo;
         }
         if (shapleyData[detailCountry][date] != undefined) {
             var pull = Object.entries(shapleyData[detailCountry][date].pull);
@@ -252,7 +253,7 @@
                 ppinfo += '<tr><td>' + push[i][1] + '</td><td>' + push[i][0] + '</td></tr>';
             }
             ppinfo += '</table>';
-            document.getElementById('pushpullinfo').innerHTML = ppinfo;
+            document.getElementById('details-legend').innerHTML = ppinfo;
             // Update shapley chart
             updateChartPushPull();
         }
@@ -307,7 +308,7 @@
             }
         }
         countylist += '</ul>';
-        document.getElementById("countrylist").innerHTML = countylist;
+        document.getElementById("countries-list").innerHTML = countylist;
     }
 
     // Update country list
@@ -342,7 +343,7 @@
     // Sort countrylist by conflict data helper function
     function sortCountryList() {
         var list, i, switching, b, shouldSwitch;
-        list = document.getElementById("countrylist");
+        list = document.getElementById("countries-list");
         switching = true;
         while (switching) {
             switching = false;
@@ -366,7 +367,7 @@
         // Declare variables
         var input = document.getElementById('search');
         var searchval = input.value.toUpperCase();
-        var li = document.getElementById('countrylist').getElementsByTagName('li');
+        var li = document.getElementById('countries-list').getElementsByTagName('li');
         // Loop through all list items, and hide those who don't match the search query
         for (i = 0; i < li.length; i++) {
             if (li[i].dataset.name.toUpperCase().indexOf(searchval) > -1) {
@@ -455,13 +456,13 @@
         document.getElementById('details').style.visibility = 'visible';
         document.getElementById('settings').style.visibility = 'visible';
         document.getElementById('countries').style.visibility = 'visible';
-        document.getElementById('conflicts').style.visibility = 'visible';
+        document.getElementById('timeline').style.visibility = 'visible';
         document.getElementById('svg-world-map-container').style.visibility = 'visible';
         setTimeout(function() {
             document.getElementById('details').style.opacity = 1;
             document.getElementById('settings').style.opacity = 1;
             document.getElementById('countries').style.opacity = 1;
-            document.getElementById('conflicts').style.opacity = 1;
+            document.getElementById('timeline').style.opacity = 1;
             document.getElementById('svg-world-map-container').style.opacity = 1;
         }, 200);
     }
@@ -491,8 +492,92 @@
         svgPanZoom.zoomOut();
     }
 
+    // HTML for UI
+    function initUI() {
+        // Avoid double loading
+        if (document.getElementById('seismograph-api-container') == null) {
+            // Add seimographAPI container HTML
+            var container = document.createElement("div");
+            container.setAttribute("id", "seismograph-api-container");
+            document.body.prepend(container);
+            // UI elements
+            var uiElements = {
+                // Countries
+                'countries': { tag: 'div', append: 'seismograph-api-container' }, 
+                'countries-search': { tag: 'div', append: 'countries' }, 
+                'countries-search-inner': { tag: 'div', append: 'countries-search', icon: 'search', click: 'return false' }, 
+                'countries-search-input': { tag: 'input', append: 'countries-search-inner' }, 
+                'countries-list': { tag: 'div', append: 'countries' }, 
+                // Settings
+                'settings': { tag: 'div', append: 'seismograph-api-container' }, 
+                'settings-zoom-in': { tag: 'button', append: 'settings', icon: 'zoom-in', click: 'zoomIn()' }, 
+                'settings-zoom-out': { tag: 'button', append: 'settings', icon: 'zoom-out', click: 'zoomOut()' }, 
+                'settings-labels': { tag: 'button', append: 'settings', icon: 'globe', click: 'toggleMapLabels(\'all\')' }, 
+                'settings-dark-mode': { tag: 'button', append: 'settings', icon: 'contrast', click: 'toggleDarkMode()' }, 
+                'settings-countries': { tag: 'button', append: 'settings', icon: 'menu', click: 'toggleBox(\'countries\')' }, 
+                'settings-timeline': { tag: 'button', append: 'settings', icon: 'timeline', click: 'toggleBox(\'timeline\');toggleBox(\'map-controls\')' }, 
+                'settings-details': { tag: 'button', append: 'settings', icon: 'chart', click: 'toggleBox(\'details\')' }, 
+                // Details
+                'details': { tag: 'div', append: 'seismograph-api-container' }, 
+                'details-title': { tag: 'span', append: 'details' }, 
+                'details-inner': { tag: 'div', append: 'details' }, 
+                'details-info': { tag: 'div', append: 'details-inner' }, 
+                'details-chart': { tag: 'div', append: 'details-inner' }, 
+                'details-chart-canvas': { tag: 'canvas', append: 'details-chart' }, 
+                'details-legend': { tag: 'div', append: 'details-inner' }, 
+                'details-help': { tag: 'div', append: 'details' }, 
+                // Timeline
+                'timeline': { tag: 'div', append: 'seismograph-api-container' }, 
+                'timeline-info': { tag: 'div', append: 'timeline' }, 
+                'timeline-title': { tag: 'span', append: 'timeline-info' }, 
+                'timeline-back': { tag: 'span', append: 'timeline-info' }, 
+                'timeline-chart': { tag: 'div', append: 'timeline' }, 
+                'timeline-chart-canvas': { tag: 'canvas', append: 'timeline-chart' }, 
+                // Overlay, Information, Loading
+                'overlay': { tag: 'div', append: 'seismograph-api-container', click: 'toggleInfo()' }, 
+                'info': { tag: 'div', append: 'seismograph-api-container' }, 
+                'info-close': { tag: 'button', append: 'info', icon: 'cross', click: 'toggleInfo()' }, 
+                'info-inner': { tag: 'div', append: 'info' }, 
+                'loading': { tag: 'div', append: 'seismograph-api-container' }, 
+            };
+            // Create all elements dynamically
+            for (var element in uiElements) {
+                window[element] = document.createElement(uiElements[element].tag);
+                window[element].setAttribute("id", element);
+                window[uiElements[element].append].appendChild(window[element]);
+                if (uiElements[element].icon != undefined) {
+                    var i = document.createElement('i');
+                    i.setAttribute("class", "flaticon-" + uiElements[element].icon);
+                    window[element].appendChild(i);
+                }
+                if (uiElements[element].click != undefined) {
+                    window[element].setAttribute("onclick", uiElements[element].click);
+                }
+            }
+            // Add missing attributes to elements
+            document.getElementById("countries-search-input").setAttribute("type", "text");
+            document.getElementById("countries-search-input").setAttribute("autocomplete", "off");
+            document.getElementById("countries-search-input").setAttribute("onkeyup", "searchCountry()");
+            document.getElementById("countries-search-input").setAttribute("onfocusout", "(keyctrl = true)");
+            document.getElementById("countries-search-input").setAttribute("placeholder", "Search country...");
+            // Add help and loading text
+            document.getElementById("details-help").innerHTML = '<span class="big top">How to use</span><div class="bgbox"><ul><li><b>Click on a country</b> for detailed information</li><li>Use the <b>timeline controls</b> or the <b>slider</b></li><li><b>Zoom</b> with mouse wheel</li><li><b>Drag</b> the map with click and hold</li><!--<li>Double-clicking on a country will zoom it in, double-clicking on the ocean will zoom out</li>--></ul></div><span class="big top">Keyboard commands</span><div class="bgbox"><ul><li>"<b> &nbsp; </b>" (Space): Pause</li><li><b>+ -</b> (Plus &amp; minus): Play animation faster or slower</li><li><b>⯅ ⯆ ⯇ ⯈</b> (Arrow keys): Start, end, one day back or forward</li><!--<li><b>C</b>, <b>D</b>, <b>I</b> and <b>L</b>: Show or hide the country list, details, info or labels</li>--></ul></div>';
+            document.getElementById("loading").innerHTML = '~~~ Loading ~~~';
+            // Hide elements
+            toggleBox('overlay');
+            toggleBox('info');
+            // Load info text
+            var infoText = "conflict-prediction-info.html";
+            loadFile(infoText, function(infoResponse) { document.getElementById("info-inner").innerHTML = infoResponse; });
+            // Ony for development
+            document.getElementById("details-title").innerHTML = 'Neural Network SHAP Interpretability';
+            document.getElementById("timeline-info").innerHTML += '<span><input type="checkbox" id="predsync" name="predsync" onclick="syncPrediction()"><label for="predsync">Sync prediction with ground truth</label></span>';
+            document.getElementById("timeline-info").innerHTML += '<div id="about"><a onclick="toggleInfo()">About <i class="flaticon-question"></i></a></div>';
+        }
+    }
+
     // Chart.js options
-    function InitChartOptions() {
+    function initChartOptions() {
         // Chart legend padding
         Chart.Legend.prototype.afterFit = function() {
             this.height = this.height + 10;
@@ -603,7 +688,8 @@
             }
         };
         // Conflict charts
-        chartconflict = new Chart(conflictcanvas, {
+        var timelineCanvas = document.getElementById('timeline-chart-canvas').getContext('2d');
+        chartconflict = new Chart(timelineCanvas, {
             type: 'line',
             data: {
                 labels: [],
@@ -627,7 +713,8 @@
         chartoptions.scales.xAxes[0].gridLines.display = false;
         chartoptions.scales.xAxes[0].ticks.display = false;
         // Push / pull chart
-        chartpushpull = new Chart(pushpullcanvas, {
+        var detailCanvas = document.getElementById('details-chart-canvas').getContext('2d');
+        chartpushpull = new Chart(detailCanvas, {
             type: 'horizontalBar',
             options: {
                 elements: {

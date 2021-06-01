@@ -1,10 +1,10 @@
 @font-face {
     font-family: "flaticon";
-    src: url("./flaticon.ttf?331de545205929a4ef07c6f6a371c0c3") format("truetype"),
-url("./flaticon.woff?331de545205929a4ef07c6f6a371c0c3") format("woff"),
-url("./flaticon.woff2?331de545205929a4ef07c6f6a371c0c3") format("woff2"),
-url("./flaticon.eot?331de545205929a4ef07c6f6a371c0c3#iefix") format("embedded-opentype"),
-url("./flaticon.svg?331de545205929a4ef07c6f6a371c0c3#flaticon") format("svg");
+    src: url("./flaticon.ttf?1110d333e50fe16e1151e36bd87a2158") format("truetype"),
+url("./flaticon.woff?1110d333e50fe16e1151e36bd87a2158") format("woff"),
+url("./flaticon.woff2?1110d333e50fe16e1151e36bd87a2158") format("woff2"),
+url("./flaticon.eot?1110d333e50fe16e1151e36bd87a2158#iefix") format("embedded-opentype"),
+url("./flaticon.svg?1110d333e50fe16e1151e36bd87a2158#flaticon") format("svg");
 }
 
 i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
@@ -18,69 +18,72 @@ i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.flaticon-chart:before {
+.flaticon-play:before {
     content: "\f101";
 }
-.flaticon-contrast:before {
+.flaticon-pause:before {
     content: "\f102";
 }
-.flaticon-cross:before {
+.flaticon-fast-forward:before {
     content: "\f103";
 }
-.flaticon-expand:before {
+.flaticon-rewind:before {
     content: "\f104";
 }
-.flaticon-fast-forward:before {
+.flaticon-skip:before {
     content: "\f105";
 }
-.flaticon-globe:before {
+.flaticon-previous:before {
     content: "\f106";
 }
 .flaticon-menu:before {
     content: "\f107";
 }
-.flaticon-minus:before {
+.flaticon-chart:before {
     content: "\f108";
 }
-.flaticon-pause:before {
+.flaticon-settings:before {
     content: "\f109";
 }
-.flaticon-play:before {
+.flaticon-plus:before {
     content: "\f10a";
 }
-.flaticon-plus:before {
+.flaticon-minus:before {
     content: "\f10b";
 }
-.flaticon-previous:before {
+.flaticon-cross:before {
     content: "\f10c";
 }
-.flaticon-question:before {
+.flaticon-expand:before {
     content: "\f10d";
 }
-.flaticon-rewind:before {
+.flaticon-search:before {
     content: "\f10e";
 }
-.flaticon-right-down:before {
+.flaticon-zoom-in:before {
     content: "\f10f";
 }
-.flaticon-right-up:before {
+.flaticon-zoom-out:before {
     content: "\f110";
 }
-.flaticon-right:before {
+.flaticon-globe:before {
     content: "\f111";
 }
-.flaticon-search:before {
+.flaticon-right-down:before {
     content: "\f112";
 }
-.flaticon-settings:before {
+.flaticon-right-up:before {
     content: "\f113";
 }
-.flaticon-skip:before {
+.flaticon-right:before {
     content: "\f114";
 }
-.flaticon-zoom-in:before {
+.flaticon-contrast:before {
     content: "\f115";
 }
-.flaticon-zoom-out:before {
+.flaticon-question:before {
     content: "\f116";
+}
+.flaticon-timeline:before {
+    content: "\f117";
 }
