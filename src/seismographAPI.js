@@ -1,6 +1,6 @@
 /**
  * SeismographAPI
- * v0.1.6
+ * v0.1.7
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
@@ -17,12 +17,10 @@
     var svgLoaded = false;
     var seismographMap; // For svg-world-map.js
     var svgPanZoom; // For svg-pan-zoom.js
-    var conflictData = {}; // Empty object for conflict data
-    var predictionData = {}; // Empty object for prediction data
-    var shapleyData = {}; // Empty object for shapley data
+    var timelineData = {}; // Empty object for timeline data
+    var detailData = {}; // Empty object for detail data
     var colorData = {}; // Empty object for color data
     var syncData = false; // Sync conflict prediction and ground truth
-    var timeData = []; // Empty array for time controls
     var detailCountry = 'World'; // 'World'
     var detailProvince = false; 
     var smallScreen = false; 
@@ -41,10 +39,10 @@
         .then(() => {
             // Startup after all scripts are loaded
             initUI();
-            initChartOptions();
             checkSize();
             checkMobile();
-            loadConflictData();
+            loadTimelineData();
+            initChartOptions();
             initCharts();
             initStartup();
         }).catch(() => console.error('Something went wrong.'));
@@ -52,24 +50,19 @@
 
     // Wait untill everything is fully loaded
     function initStartup() {
-
-        //countryData = 1; // TODO: Remove this line(= set to undefined) when implementing countryData!
-        timeData = [ 0, 1 ]; // TODO: Remove this line(= set to empty object) when implementing countryData!
-
         var waitcounter = 0;
         var startuptimer = window.setInterval(function() {
             waitcounter++
             if (waitcounter > 20) { // Wait 20 * 500ms = 10s for data answer
                 window.clearInterval(startuptimer);
                 document.getElementById('loading').innerHTML = '~~~ There seems to be a problem ~~~<br><br>Please try a <a href="javascript:location.reload()">relaod</a>';
-            } else if (conflictData == undefined) {
-                document.getElementById('loading').innerHTML = '~~~ Loading Data ~~~'; //'~~~ Loading Conflict Data ~~~'
-            } else if (svgInit == false && svgLoaded == false && colorData != undefined && conflictData != undefined && timeData.length > 1) {
-                document.getElementById('loading').innerHTML = '~~~ Loading Map ~~~'; //'~~~ Loading SVG Map ~~~'
+            } else if (timelineData == undefined) {
+                document.getElementById('loading').innerHTML = '~~~ Loading Data ~~~'; 
+            } else if (svgInit == false && svgLoaded == false && colorData != undefined && timelineData != undefined && detailData != undefined) {
+                document.getElementById('loading').innerHTML = '~~~ Loading Map ~~~'; 
                 loadSVGMap();
                 svgInit = true;
-            // TODO: Remove timeData globally with conflictData?
-            } else if (svgLoaded == true && colorData != undefined && conflictData != undefined && timeData.length > 1 && document.getElementById('map-slider') != null) {
+            } else if (svgLoaded == true && colorData != undefined && timelineData != undefined && detailData != undefined && document.getElementById('map-slider') != null) {
                 window.clearInterval(startuptimer);
                 document.getElementById('loading').innerHTML = '~~~ All Data Loaded ~~~';
                 initSVGMap();
@@ -80,7 +73,7 @@
     // Load SVG World Map
     async function loadSVGMap() {
         // Custom options
-        var options = { 
+        var svgMapOptions = { 
             libPath: 'lib/', // Point to lib-folder 
             bigMap: false, // Use small map
             showOcean: false, // Show or hide ocean layer
@@ -98,9 +91,7 @@
             timeLoop: false // Loop time animation
         };
         // Startup SVG World Map
-        //myWorldMap = await svgWorldMap(options, false);
-        //seismographMap = await svgWorldMap(params, countryData, timeData);
-        seismographMap = await svgWorldMap(options, false, colorData);
+        seismographMap = await svgWorldMap(svgMapOptions, false, colorData);
         mapSVG = seismographMap.worldMap;
         svgLoaded = true;
         return seismographMap;
@@ -108,9 +99,9 @@
 
     // SVG map start
     function initSVGMap() {
-        if (svgLoaded == true && timeData.length > 1) { // TODO: Remove timeData and replace globally with conflictData or colorData?
+        if (svgLoaded == true) {
             // Change start day
-            document.getElementById('map-slider').value = Object.keys(conflictData).length - 12; // Start 12 months ago
+            document.getElementById('map-slider').value = Object.keys(timelineData[1]).length - 12; // Start 12 months ago
             document.getElementById('map-slider').oninput();
             document.getElementById('map-control-play-pause').click();
             // Build country list 
@@ -162,26 +153,27 @@
     }
 
     // Wait for JSON load and pass data to library 
-    function loadConflictData() {
-        loadShapleyData();
-        var conflictJson = "data/conflict/conflict_gt.json";
-        loadFile(conflictJson, function(conflictResponse) {
-            conflictData = JSON.parse(conflictResponse); 
+    function loadTimelineData() {
+        var timelineJson = "data/conflict/Timeline.json";
+        loadFile(timelineJson, function(timelineResponse) {
+            var timelineDataParsed = JSON.parse(timelineResponse); 
+            var timelineDataKeys = Object.keys(timelineDataParsed); 
+            for(var i=0; i<timelineDataKeys.length; i++) {
+                timelineData[i] = timelineDataParsed[timelineDataKeys[i]];
+            }
+            chartconflict.data.labels = Object.keys(timelineData[1]);
+            loadDetailData();
             initColorData();
-            var predictionJson = "data/conflict/conflict_pred.json";
-            loadFile(predictionJson, function(predictionResponse) {
-                predictionData = JSON.parse(predictionResponse);
-                initConflictData();
-            });
+            updateTimeline();
         });
     }
 
-    // Wait for JSON load and pass data to shapley chart 
-    function loadShapleyData() {
-        if (shapleyData[detailCountry] == undefined) {
-            var shapleyJson = "data/conflict/" + detailCountry + ".json";
-            loadFile(shapleyJson, function(shapleyResponse) {
-                shapleyData[detailCountry] = JSON.parse(shapleyResponse); 
+    // Wait for JSON load and pass data to detail chart 
+    function loadDetailData() {
+        if (detailData[detailCountry] == undefined) {
+            var detailJson = "data/conflict/" + detailCountry + ".json";
+            loadFile(detailJson, function(detailResponse) {
+                detailData[detailCountry] = JSON.parse(detailResponse); 
                 updateDetails();
             });
         } else {
@@ -191,34 +183,41 @@
 
     // Sort conflict data for map countries
     function initColorData() {
-        colorData = JSON.parse(JSON.stringify(conflictData)); // Copy conflict object 
-        for (var date in conflictData) {
-            for (var country in conflictData[date]) {
-                var value = conflictData[date][country] * 255;
+        colorData = JSON.parse(JSON.stringify(timelineData[1])); // Copy conflict object 
+        for (var date in timelineData[1]) {
+            for (var country in timelineData[1][date]) {
+                var value = timelineData[1][date][country] * 255;
                 var rgb = 'rgb(255,' + (255-value) + ',' + (255-value) + ')';
                 colorData[date][country] = rgb;
             }
         }
     }
 
-    // Sort conflict data for conflict chart
-    // Format: ground data, prediction
-    function initConflictData() {
-        chartconflict.data.labels = Object.keys(conflictData);
-        for (var date in conflictData) {
-            for (var country in conflictData[date]) {
-                if (country == 'World') {
-                chartconflict.data.datasets[0].data.push(predictionData[date][country]);
-                chartconflict.data.datasets[1].data.push(conflictData[date][country]);
+    // Update timeline chart
+    function updateTimeline() {
+        chartconflict.data.datasets[0].data = [];
+        chartconflict.data.datasets[1].data = [];
+        for (var date in timelineData[1]) {
+            for (var country in timelineData[1][date]) {
+                if (country == detailCountry) {
+                    chartconflict.data.datasets[0].data.push(timelineData[0][date][country]);
+                    chartconflict.data.datasets[1].data.push(timelineData[1][date][country]);
                 }
             }
+        }
+        // Sync data = prepend 6 months in proediction
+        if (syncData) {
+            var length = chartconflict.data.datasets[0].data.length;
+            var prepend = [0, 0, 0, 0, 0, 0];
+            chartconflict.data.datasets[0].data = prepend.concat(chartconflict.data.datasets[0].data);
+            chartconflict.data.datasets[0].data = chartconflict.data.datasets[0].data.slice(0, length);
         }
         chartconflict.update();
     }
 
     // Update details
     function updateDetails() {
-        var date = Object.keys(conflictData)[day];
+        var date = Object.keys(timelineData[1])[day];
         // Set vertical line
         chartconflict.data.lineAtIndex = day;
         chartconflict.update();
@@ -232,17 +231,17 @@
             document.getElementById('timeline-title').innerHTML = seismographMap.countries[detailCountry].name;
             document.getElementById('timeline-back').innerHTML =  '(<a onclick="mapClick(\'World\')">back to global view</a>)';
         }
-        if (predictionData[date] != undefined) {
+        if (timelineData[0][date] != undefined) {
             var countryinfo = '<table>';
             countryinfo += '<tr><td><b>' + document.getElementById('timeline-title').innerHTML + '</b></td><td><b>' + date + '</b></td></tr>';
             countryinfo += '<tr><td>Probability of Conf.<br><small>(+6 months)</small></td><td>Conflict Intensity<br><small>(ground truth)</small></td></tr>';
-            countryinfo += '<tr><td><b>' + predictionData[date][detailCountry] + '</b></td><td><b>' + conflictData[date][detailCountry] + '</b></td></tr>';
+            countryinfo += '<tr><td><b>' + timelineData[0][date][detailCountry] + '</b></td><td><b>' + timelineData[1][date][detailCountry] + '</b></td></tr>';
             countryinfo += '</table>';
             document.getElementById('details-info').innerHTML = countryinfo;
         }
-        if (shapleyData[detailCountry][date] != undefined) {
-            var pull = Object.entries(shapleyData[detailCountry][date].pull);
-            var push = Object.entries(shapleyData[detailCountry][date].push);
+        if (detailData[detailCountry][date] != undefined) {
+            var pull = Object.entries(detailData[detailCountry][date].pull);
+            var push = Object.entries(detailData[detailCountry][date].push);
             var ppinfo = '<table><tr><th colspan=2>Pull factors</th></tr>';
             for (var i=0; i<5; i++) {
                 ppinfo += '<tr><td>' + pull[i][1] + '</td><td>' + pull[i][0] + '</td></tr>';
@@ -254,57 +253,34 @@
             }
             ppinfo += '</table>';
             document.getElementById('details-legend').innerHTML = ppinfo;
-            // Update shapley chart
-            updateChartPushPull();
+            // Update detail chart
+            updateDetailChart();
         }
         // Update country list
         updateCountryList();
     }
 
-    // Update shapley chart
+    // Update detail chart
     // Format: [0] = pull, [1] = push
-    function updateChartPushPull() {
-        var date = Object.keys(conflictData)[day];
-        chartpushpull.data.datasets[0].labels = Object.keys(shapleyData[detailCountry][date].pull);
-        chartpushpull.data.datasets[1].labels = Object.keys(shapleyData[detailCountry][date].push);
-        chartpushpull.data.datasets[0].data = changeToNegative(Object.values(shapleyData[detailCountry][date].pull));
-        chartpushpull.data.datasets[1].data = Object.values(shapleyData[detailCountry][date].push);
+    function updateDetailChart() {
+        var date = Object.keys(timelineData[1])[day];
+        chartpushpull.data.datasets[0].labels = Object.keys(detailData[detailCountry][date].pull);
+        chartpushpull.data.datasets[1].labels = Object.keys(detailData[detailCountry][date].push);
+        chartpushpull.data.datasets[0].data = changeToNegative(Object.values(detailData[detailCountry][date].pull));
+        chartpushpull.data.datasets[1].data = Object.values(detailData[detailCountry][date].push);
         chartpushpull.update();
-    }
-
-    // Update conflict timeline chart
-    function updateChartConflict() {
-        chartconflict.data.datasets[0].data = [];
-        chartconflict.data.datasets[1].data = [];
-        for (var date in conflictData) {
-            for (var country in conflictData[date]) {
-                if (country == detailCountry) {
-                chartconflict.data.datasets[0].data.push(predictionData[date][country]);
-                chartconflict.data.datasets[1].data.push(conflictData[date][country]);
-                }
-            }
-        }
-        // Sync data = prepend 6 months in proediction
-        if (syncData) {
-            var length = chartconflict.data.datasets[0].data.length;
-            var prepend = [0, 0, 0, 0, 0, 0];
-            chartconflict.data.datasets[0].data = prepend.concat(chartconflict.data.datasets[0].data);
-            chartconflict.data.datasets[0].data = chartconflict.data.datasets[0].data.slice(0, length);
-            //console.log(chartconflict.data.datasets[0].data);
-        }
-        chartconflict.update();
     }
 
     // Country list
     function initCountryList() {
         var countylist = '<ul>';
         for (var country in seismographMap.countries) {
-            var countrycode = seismographMap.countries[country].id;
-            var countryname = seismographMap.countries[country].name;
+            var countryCode = seismographMap.countries[country].id;
+            var countryName = seismographMap.countries[country].name;
             if (country != 'World') {
-                countylist += '<li id="' + countrycode + '" data-name="' + countryname + '" data-conflict="" data-prediciton="" onmouseover="countryOver(\'' + countrycode + '\')" onmouseout="countryOut(\'' + countrycode + '\')" onclick="countryListClick(\'' + countrycode + '\')">' + countryname + '</li>';
+                countylist += '<li id="' + countryCode + '" data-name="' + countryName + '" data-conflict="" data-prediciton="" onmouseover="countryOver(\'' + countryCode + '\')" onmouseout="countryOut(\'' + countryCode + '\')" onclick="countryListClick(\'' + countryCode + '\')">' + countryName + '</li>';
             /*} else {
-                console.log('No data: ' + countrycode + ' / ' + countryname);*/
+                console.log('No data: ' + countryCode + ' / ' + countryName);*/
             }
         }
         countylist += '</ul>';
@@ -313,24 +289,23 @@
 
     // Update country list
     function updateCountryList() {
-        var date = Object.keys(conflictData)[day];
+        var date = Object.keys(timelineData[1])[day];
         if (seismographMap != undefined) {
             for (var country in seismographMap.countries) {
-                var countrycode = seismographMap.countries[country].id;
-                if (conflictData[date][countrycode] != undefined) {
-                    // Add conflict to countrylist, TODO: Put into initCountryList()?
-                    if (document.getElementById(countrycode) != null) {
-                        var conflictday = conflictData[date][countrycode];
-                        var predicitonday = predictionData[date][countrycode];
-                        var countryname = document.getElementById(countrycode).dataset.name;
+                var countryCode = seismographMap.countries[country].id;
+                if (timelineData[1][date][countryCode] != undefined) {
+                    if (document.getElementById(countryCode) != null) {
+                        var conflictday = timelineData[1][date][countryCode];
+                        var predicitonday = timelineData[0][date][countryCode];
+                        var countryName = document.getElementById(countryCode).dataset.name;
                         if (conflictday > 0) { 
-                            document.getElementById(countrycode).dataset.conflict = conflictday;
-                            document.getElementById(countrycode).dataset.prediciton = predicitonday;
-                            document.getElementById(countrycode).innerHTML = '<span class="small red">' + formatInteger(conflictday) + '</span> <span class="small grey">' + formatInteger(predicitonday) + '</span>' + countryname;
+                            document.getElementById(countryCode).dataset.conflict = conflictday;
+                            document.getElementById(countryCode).dataset.prediciton = predicitonday;
+                            document.getElementById(countryCode).innerHTML = '<span class="small red">' + formatInteger(conflictday) + '</span> <span class="small grey">' + formatInteger(predicitonday) + '</span>' + countryName;
                         } else {
-                            document.getElementById(countrycode).dataset.conflict = '';
-                            document.getElementById(countrycode).dataset.prediciton = '';
-                            document.getElementById(countrycode).innerHTML = countryname;
+                            document.getElementById(countryCode).dataset.conflict = '';
+                            document.getElementById(countryCode).dataset.prediciton = '';
+                            document.getElementById(countryCode).innerHTML = countryName;
                         }
                     }
                 }
@@ -389,15 +364,15 @@
     }
 
     // Country list click
-    window.countryListClick = function(countrycode) {
-        countryPath = seismographMap.countries[countrycode];
-        //countryClick(countrycode);
+    window.countryListClick = function(countryCode) {
+        countryPath = seismographMap.countries[countryCode];
+        //countryClick(countryCode);
         mapClick(countryPath);
-        detailCountry = countrycode;
+        detailCountry = countryCode;
         // Pan map to country (label)
         /*if (smallScreen == false) {
-            var coordsX = 500 - parseInt(seismographMap.countryLabels[countrycode].getAttribute("x")); // 500 = SVG width / 2
-            var coordsY = 253 - parseInt(seismographMap.countryLabels[countrycode].getAttribute("y")); // 253 = SVG height / 2
+            var coordsX = 500 - parseInt(seismographMap.countryLabels[countryCode].getAttribute("x")); // 500 = SVG width / 2
+            var coordsY = 253 - parseInt(seismographMap.countryLabels[countryCode].getAttribute("y")); // 253 = SVG height / 2
             svgPanZoom.reset();
             svgPanZoom.pan({ x: coordsX, y: coordsY });
         }*/
@@ -408,15 +383,15 @@
         if (path.country != undefined || path.id == 'Ocean' || path.id == 'World' || path == 'World') {
             if (path.id == 'Ocean' || path.id == 'World' || path == 'World') {
                 var countryid = 'World';
-                var countryname = 'World';
+                var countryName = 'World';
             } else {
                 var countryid = path.country.id;
-                var countryname = path.country.name;
+                var countryName = path.country.name;
             }
             detailCountry = countryid;
-            loadShapleyData();
+            loadDetailData();
             chartconflict.options.animation.duration = 1000; // Animate lines
-            updateChartConflict();
+            updateTimeline();
             chartconflict.options.animation.duration = 0; // Don't animate lines
         }
     }
@@ -470,7 +445,7 @@
     // Sync prediction with ground truth
     window.syncPrediction = function() {
         syncData = document.getElementById('predsync').checked;
-        updateChartConflict();
+        updateTimeline();
     }
 
     // Switch to dark mode
@@ -687,7 +662,7 @@
                 }
             }
         };
-        // Conflict charts
+        // Timeline chart
         var timelineCanvas = document.getElementById('timeline-chart-canvas').getContext('2d');
         chartconflict = new Chart(timelineCanvas, {
             type: 'line',

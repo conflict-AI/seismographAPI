@@ -239,7 +239,7 @@ table td {
     font-size: 14px;
 }
 
-/* Details */
+/* Details & help */
 
 #details {
     right: 0;
@@ -323,23 +323,23 @@ table td {
     text-transform: capitalize;
 }
 
-/* Help, info & loading */
-
-#help .bgbox {
+#details-help .bgbox {
     font-size: 12px;
     text-align: left;
 }
 
-#help b {
+#details-help b {
     color: #262828;
     font-weight: normal;
 }
 
-#help ul li {
+#details-help ul li {
     line-height: 16px;
     list-style: disclosure-closed;
     margin-left: 15px;
 }
+
+/* Info & loading */
 
 #about {
     position: fixed;
@@ -507,6 +507,7 @@ table td {
 #timeline-info {
 	width: 300px;
 	margin: auto;
+    text-align: center;
 }
 
 #timeline-title, #timeline-back {

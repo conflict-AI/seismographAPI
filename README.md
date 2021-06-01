@@ -55,6 +55,17 @@ Further Development & Changelog
 <details>
 <summary><b>Done</b></summary>  
 
+* 0.1.7
+  * Modified data import
+  * Combined conflict timeline data
+* 0.1.6
+  * Added UI generator
+  * Modified icon font
+  * Outsourced info text
+* 0.1.5
+  * Fixed library path bug
+* 0.1.4
+  * Converted seismographAPI() to encapsulated function
 * 0.1.3
   * Added README and LICENSE
 * 0.1.2
