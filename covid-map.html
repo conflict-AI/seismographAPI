@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>Just Another Corona Virus World Map</title>
+        <link rel="stylesheet" type="text/css" href="covid-map.css">
+        <meta property="og:title" content="Just Another Corona Virus World Map" />
+        <meta property="og:site_name" content="https://github.com/raphaellepuschitz/" />
+        <meta property="og:description" content="🗺 Demo for the SVG World Map JavaScript library" />
+        <meta property="og:url" content="https://raphaellepuschitz.github.io/SVG-World-Map/demo/corona-world-map.html" />
+        <meta property="og:image" content="https://raphaellepuschitz.github.io/SVG-World-Map/demo/img/corona-world-map.png" />
+	</head>
+	<body>
+        <!-- Countries -->
+        <div id="countries" class="hidden">
+            <div id="countrysearch" class="box">
+                <div id="searchcontainer">
+                    <i class="flaticon-search"></i>
+                    <input type="text" id="search" autocomplete="off" onkeyup="searchCountry()" onfocusout="(keyctrl = true)" placeholder="Search country...">
+                </div>
+            </div>
+            <div id="countrylist" class="box"></div>
+        </div>
+        <!-- Settings -->
+        <div id="settings" class="box hidden">
+            <button onclick="svgPanZoom.zoomIn()"><i class="flaticon-zoom-in"></i></button>
+            <button onclick="svgPanZoom.zoomOut()"><i class="flaticon-zoom-out"></i></button>
+            <button onclick="coronaWorldMap.labels('all')"><i class="flaticon-globe"></i></button>
+            <button onclick="clickInfo()"><i class="flaticon-question"></i></button>
+            <button onclick="toggleBox('countries')"><i class="flaticon-menu"></i></button>
+            <button onclick="toggleBox('details')"><i class="flaticon-chart"></i></button>
+        </div>
+        <!-- Details -->
+        <div id="details" class="box hidden">
+            <span id="countrytitle" class="big top hidden"></span>
+            <div id="countrydetails" class="bgbox hidden">
+                <div id="countrystats"></div>
+                <div class="chart">
+                    <canvas id="countrycanvas"></canvas>
+                </div>
+                <div class="chart new">
+                    <canvas id="countrynewcanvas"></canvas>
+                </div>
+            </div>
+            <span id="worldtitle" class="big top">World</span>
+            <div id="worlddetails" class="bgbox">
+                <div id="worldstats"></div>
+                <div class="chart">
+                    <canvas id="worldcanvas"></canvas>
+                </div>
+                <div class="chart new">
+                    <canvas id="worldnewcanvas"></canvas>
+                </div>
+            </div>
+            <div id="help">
+                <span class="big top">How to use</span>
+                <div class="bgbox">
+                    <ul>
+                        <li><b>Click on a country</b> for detailed information</li>
+                        <li>Use the <b>timeline controls</b> or the <b>slider</b> to show the spread of the virus per day</li>
+                        <li><b>Zoom</b> with mouse wheel</li>
+                        <li><b>Drag</b> the map with click and hold</li>
+                        <!--<li>Double-clicking on a country will zoom it in, double-clicking on the ocean will zoom out</li>-->
+                    </ul>
+                </div>
+                <span class="big top">Keyboard commands</span>
+                <div class="bgbox">
+                    <ul>
+                        <li>"<b> &nbsp; </b>" (Space): Pause</li>
+                        <li><b>+ -</b> (Plus & minus): Play animation faster or slower</li>
+                        <li><b>⯅ ⯆ ⯇ ⯈</b> (Arrow keys): Start, end, one day back or forward</li>
+                        <li><b>C</b>, <b>D</b>, <b>I</b> and <b>L</b>: Show or hide the country list, details, info or labels</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Logo -->
+        <div id="logo" class="hidden">
+            <span class="small black top">just another</span>
+            <div class="big">
+                <span class="red">CoronaVirus</span>
+                <span class="green">WorldMap</span>
+            </div>
+        </div>
+        <!-- Info -->
+        <div id="info" class="box hidden">
+            <div class="bgbox">
+                This is a demo for the <a href="https://github.com/raphaellepuschitz/SVG-World-Map" title="SVG World Map JS" target="_blank">SVG World Map</a> JavaScript library<br><br>
+                <b>Developed by:</b> <a href="mailto:raphael.lepuschitz@gmail.com">Raphael Lepuschitz</a>
+            </div>
+            <div class="bgbox">
+                <b>Data sources:</b><br>
+                Corona Virus aggregated data from <a href="https://coronavirus-tracker-api.herokuapp.com" title="Corona Virus Tracker API" target="_blank">Corona Virus Tracker API</a> developed by <a href="https://github.com/ExpDev07/" title="ExpDev07" target="_blank">ExpDev07</a><br>
+                Original data provided by the <a href="https://github.com/CSSEGISandData/COVID-19" title="Johns Hopkins CSSE" target="_blank">COVID-19 Data Repository</a> from the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)
+            </div>
+            <div class="bgbox">
+                <b>Tools:</b><br>
+                Map visualization done with <a href="https://github.com/raphaellepuschitz/SVG-World-Map" title="SVG World Map JS" target="_blank">SVG World Map</a><br>
+                <a href="https://github.com/ariutta/svg-pan-zoom" title="SVG pan zoom" target="_blank">SVG pan & zoom</a> library for map movement<br>
+                Charts rendered with <a href="https://www.chartjs.org" title="chartjs" target="_blank">Chart.js</a><br>
+                Icons from <a href="https://www.flaticon.com" title="Flaticon" target="_blank">Flaticon.com</a><br>
+                Icons designed by <a href="https://www.flaticon.com/authors/freepik" title="Freepik" target="_blank">Freepik</a>, <a href="https://www.flaticon.com/authors/those-icons" title="Those Icons" target="_blank">Those Icons</a> and <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons" target="_blank">Smashicons</a>
+            </div>
+        </div>
+        <!-- Loading -->
+        <div id="loading" class="box">~~~ Loading ~~~</div>
+        <!-- Scripts -->
+        <!--<script src="src/seismographAPI.js"></script>
+        <script>seismographAPI()</script>-->
+        <script src="lib/svg-world-map.js"></script>
+        <script src="lib/svg-pan-zoom.min.js"></script>
+        <script src="lib/chart.min.js"></script>
+        <script src="lib/corona-world-map.js"></script>
+    </body>
+</html>

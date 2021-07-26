@@ -1,0 +1,683 @@
+/* Global */
+
+html {
+    height: 100%;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Lucida Sans Unicode, Lucida Grande, sans-serif;
+    /*background-color: rgb(135, 177, 179);*/
+    margin: 0;
+    background-color: #8AB1B4;
+    font-size: 13px;
+}
+
+a {
+    cursor: pointer;
+    color: #db3232;
+    text-decoration: none;
+}
+
+button {
+    font-family: sans-serif;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
+    vertical-align: middle;
+}
+
+h3 {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+ul li {
+    list-style: none;
+    padding: 5px 0;
+    /*line-height: 22px;*/
+}
+
+/* Classes */
+
+.big {
+    font-size: 25px;
+}
+
+.small {
+    font-size: 10px;
+}
+
+.top {
+    font-size: 16px;
+}
+
+.black {
+    color: #262828;
+}
+
+.green {
+    color: #1eac00;
+}
+
+.orange {
+    color: #e8862c;
+}
+
+.red {
+    color: #db3f3b;
+}
+
+.icon {
+    font-family: apple color emoji,segoe ui emoji,noto color emoji,android emoji,emojisymbols,emojione mozilla,twemoji mozilla,segoe ui symbol;
+}
+
+.hidden { 
+    display: none;
+}
+
+.box {
+    position: fixed;
+    padding: 10px;
+    /*border: 1px solid #000000;
+    border-radius: 8px;
+    background-color: rgba(208, 208, 178, .85);*/
+    background-color: rgba(50, 50, 50, .9);
+    transition: opacity .5s;
+    color: #CDCDCD;
+}
+
+.bgbox {
+    padding: 10px;
+    margin: 5px 0 20px;
+    border-radius: 4px;
+    /*background-color: rgba(112, 109, 107, 0.3);*/
+    background-color: rgba(240, 240, 240, 0.15);
+}
+
+.bgbox:last-child {
+    margin-bottom: 10px;
+}
+
+.chart {
+    width: 250px;
+    height: 160px;
+    margin-bottom: 8px;
+}
+
+.chart.new {
+    width: 250px;
+    height: 80px;
+}
+
+/* Fade-In elements */
+
+#svg-world-map-container, #details, #settings, #countries {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 1s linear;
+}
+
+/* Settings */
+
+#settings {
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 40px;
+    padding: 10px 10px 0;
+    border-bottom-left-radius: 3px;
+    cursor: default;
+}
+
+#settings button {
+    padding: 5px 0;
+    border-radius: 3px;
+}
+
+#settings button:hover, #countrylist ul li:hover, #searchcontainer:hover {
+    /*background-color: rgba(112, 109, 107, 0.5);*/
+    background-color: rgba(240, 240, 240, 0.15);
+}
+
+#settings button i {
+    margin: 3px;
+}
+
+#settings button i::before {
+    font-size: 17px;
+    margin: 0 10px;
+    color: #CDCDCD;
+}
+
+#settings button i.flaticon-chart::before {
+    margin-left: 12px;
+}
+
+#settings button i.flaticon-question::before {
+    margin-right: 12px;
+    font-size: 14px;
+}
+
+/* Details */
+
+#details {
+    right: 0;
+    top: 51px;
+    bottom: 51px;
+    width: 280px;
+    overflow-y: auto;
+    text-align: center;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+#worldstats .big, #countrystats .big {
+    line-height: 35px;
+}
+
+#details .totalcount {
+    text-align: left;
+    margin-left: 5px;
+}
+
+#details .totalcount .small {
+    margin-left: 5px;
+}
+
+#details .onedaycount span {
+    margin-right: 5px;
+}
+
+#details .onedaycount .black, #details .onedaycount .orange {
+    margin-left: 5px;
+}
+
+#details .totalcount .red, #details .totalcount .green, #details .totalcount .orange {
+    text-shadow: 0px 0px 3px #000000;
+}
+
+#details .onedaycount {
+    margin: 10px !important;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #3A3A3A;
+    text-align: left;
+}
+
+/* Logo */
+
+#logo {
+    position: fixed;
+    top: 15vh;
+    width: 276px;
+    left: calc(50vw - 188px); /* 276/2 + 50 */
+    font-weight: bold;
+    text-align: center;
+    margin: 5px 0;
+}
+
+#logo .big {
+    font-style: italic;
+    background-color: rgba(50, 50, 50, .9);
+    /*border: 2px solid rgba(240, 240, 240, 0.3);*/
+    border: 2px solid #808080;
+    box-shadow: 0px 0px 1px 2px rgba(50, 50, 50, .9);
+    border-radius: 35px;
+    width: 270px;
+    height: 40px;
+    font-size: 25px;
+    margin-top: -5px;
+    letter-spacing: -2px;
+}
+
+#logo .big .green {
+    margin-left: -6px;
+}
+
+#logo .big .red {
+    margin-left: -6px;
+}
+
+#logo .small.top {
+    font-size: 11px;
+    height: 18px;
+    padding: 0px 7px 1px;
+    transform: skew(-20deg);
+    border-radius: 5px;
+    background-color: #808080;
+    display: inline-block;
+   /*box-shadow: 0px 0px 1px 2px rgba(50, 50, 50, .85);
+    opacity: .9;*/
+}
+
+/* Help, info & loading */
+
+#help .bgbox {
+    font-size: 12px;
+    text-align: left;
+}
+
+#help b {
+    color: #262828;
+    font-weight: normal;
+}
+
+#help ul li {
+    line-height: 16px;
+}
+
+#info {
+    top: 25vh;
+    width: 600px;
+    left: calc(50vw - 360px); /* 600/2 + 40 */
+    border-radius: 3px;
+}
+
+#info .bgbox:last-child {
+    margin-bottom: 0;
+}
+
+#loading {
+    top: 35vh;
+    width: 250px;
+    left: calc(50vw - 135px); /* 250/2 + 10 */
+    text-align: center;
+    border-radius: 3px;
+}
+
+/* Country search */
+
+#countrysearch {
+    top: 0;
+    left: 0;
+    height: 30px; /* + 20px padding */
+    width: 180px;
+    border-bottom-right-radius: 3px;
+}
+
+#searchcontainer {
+    display: flex;
+    width: 100%;
+    /*border: 1px solid #666666;
+    border-radius: 4px;*/
+    width: 174px;
+    padding: 3px 2px;
+    border-radius: 3px;
+}
+
+#searchcontainer i {
+    margin: 3px 4px 0 -4px
+}
+
+#searchcontainer i::before {
+    font-size: 15px;
+    margin: 0 10px 0;
+}
+
+#search {
+    background-color: transparent;
+    color: #CDCDCD;
+    border: none;
+    font-size: 13px;
+    width: 135px;
+}
+
+/* Countries */
+
+#countrylist {
+    left: 0;
+    top: 51px;
+    bottom: 51px;
+    width: 180px;
+    overflow-y: auto;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+#countrylist ul li {
+    cursor: pointer;
+    padding: 3px 10px;
+    border-radius: 4px;
+}
+
+#countrylist ul li .small {
+    margin-right: 5px;
+}
+
+/* Controls */
+
+#map-controls {
+    background-color: transparent !important;
+}
+
+#map-control-buttons, #map-slider-container, #map-date {
+    bottom: 0 !important;
+    height: 40px;
+    position: fixed;
+    padding: 10px 10px 0;
+    background-color: rgba(50, 50, 50, .9) !important;
+    transition: opacity .5s;
+    color: #CDCDCD !important;
+}
+
+#map-control-buttons {
+    left: 0;
+    width: 180px !important;
+    border-top-right-radius: 3px;
+}
+
+#map-slider-container {
+    left: 201px;
+    right: 301px;
+    width: auto !important;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
+#map-date {
+    right: 0;
+    width: 280px !important;
+    height: 45px;
+    float: left;
+    border-top-left-radius: 3px;
+    padding: 5px 10px 0;
+    text-align: center !important;
+    font-size: 30px;
+}
+
+#map-controls button {
+    margin-top: 5px !important;
+}
+
+#map-controls button:hover {
+    opacity: 1 !important;
+}
+
+#map-controls button i::before {
+    font-size: 20px;
+    margin: 0 7px !important;
+    color: #CDCDCD;
+}
+
+#map-speed-controls {
+    display: none;
+    float: left;
+    margin-left: 50px;
+}
+
+#map-slower, #map-faster {
+    margin-top: 6px;
+}
+
+#map-slower i::before, #map-faster i::before {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#map-infobox span {
+    text-shadow: none;
+    font-weight: bold;
+}
+
+/* Responsive breakpoints */
+
+@media all and (max-width: 999px) {
+
+    .big {
+        font-size: 15px;
+    }
+
+    #settings {
+        width: 100%;
+        display: flex; 
+        justify-content: flex-end;
+        padding: 0;
+        border-radius: 0;
+    }
+
+    #countrysearch {
+        height: 35px;
+    }
+
+    #searchcontainer, #search {
+        width: 100%;
+    }
+
+    #worldtitle, #countrytitle, #help .big {
+        font-size: 15px;
+        line-height: 27px;
+    }
+
+    #worldstats, #countrystats {
+        margin-bottom: 15px;
+        clear: both;
+        display: flex;
+    }
+
+    #details .totalcount, #details .onedaycount {
+        width: 60%;
+        float: left;
+    }
+
+    #details .onedaycount {
+        width: 40%;
+    }
+
+    #details .onedaycount {
+        border-top: none;
+        border-bottom: none;
+        font-size: 10px;
+        float: right;
+        text-align: right;
+    }
+
+    #details .onedaycount .black, #details .onedaycount .orange {
+        margin-left: 0;
+    }
+
+    #details .onedaycount span:before { 
+        content: ' '; 
+        display: block;
+        margin-top: 10px;
+    }
+
+    #details .chart {
+        clear: both;
+        margin: 0 auto;
+    }
+
+    #map-control-buttons, #map-slider-container, #map-date {
+        height: 35px !important;
+        padding: 5px 0 0 !important;
+    }
+
+    #map-control-buttons {
+        border-top-left-radius: 3px;
+    }
+
+    #map-controls button i::before {
+        font-size: 18px;
+        margin: 0 5px;
+    }
+
+    #map-date {
+        font-size: 20px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 3px;
+    }
+
+    @media all and (orientation: portrait) {
+
+        #logo {
+            top: 50px;
+            left: calc(50vw - 138px);
+        }
+    
+        #info {
+            top: 135px;
+            right: 1px;
+            left: 1px;
+            width: auto;
+        }
+
+        #details, #countrysearch, #countrylist {
+            right: 1px;
+            left: 1px;
+            width: auto;
+            border-radius: 3px;
+        }
+    
+        #details {
+            top: unset;
+            bottom: 82px;
+            height: calc(50vh - 103px);
+        }
+
+        #countrysearch {
+            padding: 5px 0 0;
+            top: 41px;
+        }
+
+        #countrylist {
+            top: 82px;
+            bottom: unset;
+            height: calc(50vh - 102px);
+        }
+
+        #map-slider-container {
+            left: 0;
+            right: 0;
+            border-radius: 0;
+            padding-right: 20px;
+        }
+
+        #map-slider {
+            width: 93% !important;
+            margin: 14px 12px 0 !important;
+        }
+
+        #map-control-buttons {
+            left: 1px !important;
+            bottom: 41px !important;
+            width: calc(50vw - 1px) !important;
+            border-top-right-radius: 0;
+            border-bottom-left-radius: 3px;
+            text-align: center !important;
+        }
+
+        #map-date {
+            right: 1px !important;
+            bottom: 41px !important;
+            width: calc(50vw - 2px) !important;
+            text-align: center !important;
+            border-bottom-right-radius: 3px;
+        }
+
+    }
+
+    @media all and (orientation: landscape) {
+
+        #logo {
+            top: 0;
+            left: calc(50vw - 163px);
+        }
+    
+        #info {
+            top: 75px;
+            right: 51px;
+            left: 1px;
+            bottom: 41px;
+            width: auto;
+            overflow-y: auto;
+        }
+        
+        #info .bgbox:last-child {
+            margin-bottom: 10px;
+        }
+
+        #settings {
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: auto;
+            flex-direction: column-reverse;
+        }
+
+        #settings button {
+            margin: 6px 6px 4px 7px;
+            padding: 9px;
+        }
+
+        #settings button i::before {
+            margin-left: -1px !important;
+        }
+        
+        #details {
+            top: 0;
+            right: 51px;
+            bottom: 41px;
+            width: calc(50vw - 46px);
+            border-top-left-radius: 0;
+        }
+        
+        #countrysearch, #countrylist {
+            width: calc(50vw - 46px);
+        }
+        
+        #countrysearch {
+            padding: 5px 10px 0;
+            top: 0;
+        }
+        
+        #countrylist {
+            top: 41px;
+            bottom: 41px;
+        }
+
+        #map-date {
+            left: 0;
+            width: calc(50vw - 207px) !important;
+            border-top-left-radius: 0;
+            border-top-right-radius: 3px;
+        }
+
+        #map-control-buttons {
+            left: calc(50vw - 206px) !important;
+            text-align: center;
+        }
+
+        #map-controls button {
+            margin-top: 7px !important;
+        }
+
+        #map-slider-container {
+            left: unset;
+            right: 51px;
+            width: calc(50vw - 26px) !important;
+        }
+
+        #map-slider {
+            width: 87% !important;
+            margin: 14px 13px 0 21px !important;
+        }
+        
+    }
+
+}
+
+@media all and (max-width: 666px) { 
+
+    #map-date {
+        font-size: 12px;
+        line-height: 33px;
+    }
+
+}
