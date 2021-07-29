@@ -1,6 +1,6 @@
 /**
  * SeismographAPI
- * v0.2.0
+ * v0.2.1
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
@@ -29,8 +29,7 @@
 
     // Default options
     var options = {
-        detailDataPath: '', // Point to data file
-        timelineDataPath: '', // Point to data file
+        dataPath: 'data/', // Point to data path
         showCountryList: true, // Show or hide country list
         showDetails: true, // Show or hide details
         showTimeline: true, // Show or hide timeline
@@ -152,11 +151,11 @@
 
     // Wait for JSON load and pass data to library 
     function loadTimelineData() {
-        var timelineJson = "data/conflict/Timeline.json";
+        var timelineJson = options.dataPath + "Timeline.json";
         loadFile(timelineJson, function(timelineResponse) {
             var timelineDataParsed = JSON.parse(timelineResponse); 
             var timelineDataKeys = Object.keys(timelineDataParsed); 
-            for(var i=0; i<timelineDataKeys.length; i++) {
+            for (var i=0; i<timelineDataKeys.length; i++) {
                 timelineData[i] = timelineDataParsed[timelineDataKeys[i]];
             }
             timelineChart.data.labels = Object.keys(timelineData[1]);
@@ -169,7 +168,7 @@
     // Wait for JSON load and pass data to detail chart 
     function loadDetailData() {
         if (detailData[detailCountry] == undefined) {
-            var detailJson = "data/conflict/" + detailCountry + ".json";
+            var detailJson = options.dataPath + detailCountry + ".json";
             loadFile(detailJson, function(detailResponse) {
                 detailData[detailCountry] = JSON.parse(detailResponse); 
                 updateDetails();
