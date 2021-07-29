@@ -10,6 +10,190 @@
 	<body>
         <!-- Init seismographAPI -->
         <script src="src/seismographAPI.js"></script>
-        <script>seismographAPI()</script>
+        <script>
+        // SVG World Map options
+        var svgMapOptions = { 
+            libPath: 'lib/', // Point to lib-folder 
+            bigMap: false, // Use small map
+            showOcean: false, // Show or hide ocean layer
+            showAntarctica: false, // Show or hide antarctic layer
+            showInfoBox: true, // Show info box
+            worldColor: '#EFEFEF', 
+            labelFill: { out: '#666666',  over: '#444444',  click: '#444444' }, 
+            provinceStroke: { out: '#CCCCCC',  over: '#999999',  click: '#999999' }, 
+            provinceStrokeWidth: { out: '0.3',  over: '0.3',  click: '0.5' }, 
+            timeControls: true, // Time data to activate time antimation controls
+        };
+        // Chart.js Options
+        var chartDetailOptions = {
+            type: 'horizontalBar',
+            data: {
+                labels: ["", "", "", "", ""],
+                datasets: [{
+                    data: [-0.05, -0.04, -0.03, -0.02, -0.01],
+                    backgroundColor: "rgba(128, 128, 128, .3)",
+                    hoverBackgroundColor: "rgba(128, 128, 128, .6)"
+                }, {
+                    data: [0.05, 0.04, 0.03, 0.02, 0.01],
+                    backgroundColor: "rgba(200, 0, 0, .3)",
+                    hoverBackgroundColor: "rgba(200, 0, 0, .6)"
+                }]
+            },
+            options: { 
+                elements: {
+                    rectangle: {
+                        borderWidth: 1,
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    fontSize: 13,
+                    text: 'Pull factors                Push factors'
+                },
+                tooltips: false,
+                plugins: { 
+                    crosshair: false,
+                    datalabels: {
+                        display: true,
+                        align: function(value, context) {
+                            if (value.datasetIndex != undefined) {
+                                if (value.datasetIndex == 0) {
+                                    return 'left';
+                                } else {
+                                    return 'right';
+                                }
+                            }
+                        },
+                        anchor: function(value, context) {
+                            if (value.datasetIndex != undefined) {
+                                if (value.datasetIndex == 0) {
+                                    return 'end';
+                                } else {
+                                    return 'start';
+                                }
+                            }
+                        },
+                        formatter: function(value, context) {
+                            if (context.dataset.labels != undefined) {
+                                return context.dataset.labels[context.dataIndex];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            min: -0.05, 
+                            max: 0.08,
+                        }, 
+                        gridLines: {
+                            lineWidth: 0,
+                            zeroLineWidth: 1
+                        }
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        gridLines: {
+                            lineWidth: 0,
+                            zeroLineWidth: 0
+                        }
+                    }],
+                },
+            }
+        };
+        var chartTimelineOptions = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Probability of Conflict (6 months ahead)',
+                    yAxisID: 'CP',
+                    data: [],
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(128, 128, 128, .3)'
+                }, {
+                    label: 'Composite Conflict Intensity (ground truth)',
+                    yAxisID: 'CG',
+                    data: [],
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(200, 0, 0, .3)'
+                }]
+            },
+            options: { 
+                animation: { duration: 0 }, 
+                maintainAspectRatio: false, 
+                legend: { labels: { usePointStyle: true, fontColor: "#666666", fontSize: 11 } },
+                elements: { point:{ radius: 0 } }, 
+                scales: { 
+                    xAxes: [{ 
+                        ticks: {
+                            callback: function(label, index, labels) {
+                                if (index % 4 == 0) {
+                                    return label.substr(0, 4);
+                                } else {
+                                    return '';
+                                }
+                            }
+                        }, 
+                        gridLines: { display: true } 
+                    }], 
+                    yAxes: [{
+                        id: 'CP',
+                        type: 'linear',
+                        position: 'left',
+                        ticks: { maxTicksLimit: 5, beginAtZero: true }
+                    }, {
+                        id: 'CG',
+                        type: 'linear',
+                        position: 'right',
+                        ticks: { maxTicksLimit: 5, beginAtZero: true, fontColor: '#ECB0B0' }
+                    }]
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                    position: 'custom',
+                    caretSize: 0,
+                    backgroundColor: 'rgba(250, 250, 250, 0.9)',
+                    titleFontSize: 14,
+                    titleFontColor: '#666666',
+                    bodyFontSize: 13,
+                    bodyFontColor: '#666666',
+                    borderWidth: 1,
+                    borderColor: '#CCCCCC'
+                },
+                plugins: {
+                    datalabels: false,
+                },
+                hover: {
+                    mode: 'index',
+                    intersect: false,
+                    onHover: function (event, item) {
+                        if (item.length && (event.type == 'click' || event.type == 'mousemove')) {
+                            document.getElementById('map-slider').value = item[0]._index;
+                            document.getElementById('map-slider').dispatchEvent(new Event("input"));
+                        }
+                    }
+                }
+            }
+        };
+        // SeismographAPI options
+        var options = {
+            dataPath: '', // Point to data file
+            showCountryList: true, // Show or hide country list
+            showDetails: true, // Show or hide details
+            showTimeline: true, // Show or hide timeline
+            darkMode: false, // Toggle dark mode
+            svgMapOptions: svgMapOptions, // SVG World Map options
+            chartDetailOptions: chartDetailOptions, // Chart.js options
+            chartTimelineOptions: chartTimelineOptions, // Chart.js options
+        };
+        seismographAPI(options);
+        </script>
     </body>
 </html>

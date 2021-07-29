@@ -1,6 +1,6 @@
 /**
  * SeismographAPI
- * v0.1.7
+ * v0.2.0
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
@@ -27,8 +27,27 @@
     var isMobile = false; 
     var day = 0;
 
+    // Default options
+    var options = {
+        detailDataPath: '', // Point to data file
+        timelineDataPath: '', // Point to data file
+        showCountryList: true, // Show or hide country list
+        showDetails: true, // Show or hide details
+        showTimeline: true, // Show or hide timeline
+        darkMode: false, // Toggle dark mode
+        svgMapOptions: {}, // SVG World Map options
+        chartDetailOptions: {}, // Chart.js options
+        chartTimelineOptions: {}, // Chart.js options
+    };
+
     // Main function: SVG map init call, options handling, return the map object
-    async function seismographAPI() {
+    async function seismographAPI(initOptions) {
+        // Overwrite default options with initOptions
+        for (var option in initOptions) {
+            if (initOptions.hasOwnProperty(option)) { 
+                options[option] = initOptions[option];
+            }
+        }
         // Load CSS
         document.getElementsByTagName('head')[0].insertAdjacentHTML('beforeend', '<link rel="stylesheet" href="src/seismographAPI.css" />');
         // Load JS
@@ -72,26 +91,7 @@
 
     // Load SVG World Map
     async function loadSVGMap() {
-        // Custom options
-        var svgMapOptions = { 
-            libPath: 'lib/', // Point to lib-folder 
-            bigMap: false, // Use small map
-            showOcean: false, // Show or hide ocean layer
-            showAntarctica: false, // Show or hide antarctic layer
-            showLabels: true, // Show country labels
-            showInfoBox: true, // Show info box
-            worldColor: '#EFEFEF', 
-            labelFill: { out: '#666666',  over: '#444444',  click: '#444444' }, 
-            //countryStroke: { out: '#999999',  over: '#999999',  click: '#999999' }, 
-            //provinceFill: { out: '#FFFFFF',  over: '#FFFFFF',  click: '#999999' }, 
-            provinceStroke: { out: '#CCCCCC',  over: '#999999',  click: '#999999' }, 
-            provinceStrokeWidth: { out: '0.3',  over: '0.3',  click: '0.5' }, 
-            timeControls: true, // Time data to activate time antimation controls
-            timePause: true, // Set pause to false for autostart
-            timeLoop: false // Loop time animation
-        };
-        // Startup SVG World Map
-        seismographMap = await svgWorldMap(svgMapOptions, false, colorData);
+        seismographMap = await svgWorldMap(options.svgMapOptions, false, colorData);
         mapSVG = seismographMap.worldMap;
         svgLoaded = true;
         return seismographMap;
@@ -121,8 +121,6 @@
             document.getElementById('predsync').checked = false;
             // Hide loading and show boxes and map after startup
             toggleBox('loading');
-            //toggleBox('settings');
-            //toggleBox('timeline');
             if (smallScreen != 'landscape') {
                 //toggleBox('details'); 
             }
@@ -161,7 +159,7 @@
             for(var i=0; i<timelineDataKeys.length; i++) {
                 timelineData[i] = timelineDataParsed[timelineDataKeys[i]];
             }
-            chartconflict.data.labels = Object.keys(timelineData[1]);
+            timelineChart.data.labels = Object.keys(timelineData[1]);
             loadDetailData();
             initColorData();
             updateTimeline();
@@ -195,32 +193,32 @@
 
     // Update timeline chart
     function updateTimeline() {
-        chartconflict.data.datasets[0].data = [];
-        chartconflict.data.datasets[1].data = [];
+        timelineChart.data.datasets[0].data = [];
+        timelineChart.data.datasets[1].data = [];
         for (var date in timelineData[1]) {
             for (var country in timelineData[1][date]) {
                 if (country == detailCountry) {
-                    chartconflict.data.datasets[0].data.push(timelineData[0][date][country]);
-                    chartconflict.data.datasets[1].data.push(timelineData[1][date][country]);
+                    timelineChart.data.datasets[0].data.push(timelineData[0][date][country]);
+                    timelineChart.data.datasets[1].data.push(timelineData[1][date][country]);
                 }
             }
         }
         // Sync data = prepend 6 months in proediction
         if (syncData) {
-            var length = chartconflict.data.datasets[0].data.length;
+            var length = timelineChart.data.datasets[0].data.length;
             var prepend = [0, 0, 0, 0, 0, 0];
-            chartconflict.data.datasets[0].data = prepend.concat(chartconflict.data.datasets[0].data);
-            chartconflict.data.datasets[0].data = chartconflict.data.datasets[0].data.slice(0, length);
+            timelineChart.data.datasets[0].data = prepend.concat(timelineChart.data.datasets[0].data);
+            timelineChart.data.datasets[0].data = timelineChart.data.datasets[0].data.slice(0, length);
         }
-        chartconflict.update();
+        timelineChart.update();
     }
 
     // Update details
     function updateDetails() {
         var date = Object.keys(timelineData[1])[day];
         // Set vertical line
-        chartconflict.data.lineAtIndex = day;
-        chartconflict.update();
+        timelineChart.data.lineAtIndex = day;
+        timelineChart.update();
         // Update info
         if (detailCountry == 'World') {
             //document.getElementById('countrytitle').innerHTML =  'World';
@@ -264,11 +262,11 @@
     // Format: [0] = pull, [1] = push
     function updateDetailChart() {
         var date = Object.keys(timelineData[1])[day];
-        chartpushpull.data.datasets[0].labels = Object.keys(detailData[detailCountry][date].pull);
-        chartpushpull.data.datasets[1].labels = Object.keys(detailData[detailCountry][date].push);
-        chartpushpull.data.datasets[0].data = changeToNegative(Object.values(detailData[detailCountry][date].pull));
-        chartpushpull.data.datasets[1].data = Object.values(detailData[detailCountry][date].push);
-        chartpushpull.update();
+        detailChart.data.datasets[0].labels = Object.keys(detailData[detailCountry][date].pull);
+        detailChart.data.datasets[1].labels = Object.keys(detailData[detailCountry][date].push);
+        detailChart.data.datasets[0].data = changeToNegative(Object.values(detailData[detailCountry][date].pull));
+        detailChart.data.datasets[1].data = Object.values(detailData[detailCountry][date].push);
+        detailChart.update();
     }
 
     // Country list
@@ -340,7 +338,7 @@
     // Country search
     window.searchCountry = function() {
         // Declare variables
-        var input = document.getElementById('search');
+        var input = document.getElementById('countries-search-input');
         var searchval = input.value.toUpperCase();
         var li = document.getElementById('countries-list').getElementsByTagName('li');
         // Loop through all list items, and hide those who don't match the search query
@@ -390,9 +388,9 @@
             }
             detailCountry = countryid;
             loadDetailData();
-            chartconflict.options.animation.duration = 1000; // Animate lines
+            timelineChart.options.animation.duration = 1000; // Animate lines
             updateTimeline();
-            chartconflict.options.animation.duration = 0; // Don't animate lines
+            timelineChart.options.animation.duration = 0; // Don't animate lines
         }
     }
 
@@ -471,6 +469,8 @@
     function initUI() {
         // Avoid double loading
         if (document.getElementById('seismograph-api-container') == null) {
+            // Toggle dark mode
+            if (options.darkMode == true) { toggleDarkMode(); }
             // Add seimographAPI container HTML
             var container = document.createElement("div");
             container.setAttribute("id", "seismograph-api-container");
@@ -538,9 +538,13 @@
             // Add help and loading text
             document.getElementById("details-help").innerHTML = '<span class="big top">How to use</span><div class="bgbox"><ul><li><b>Click on a country</b> for detailed information</li><li>Use the <b>timeline controls</b> or the <b>slider</b></li><li><b>Zoom</b> with mouse wheel</li><li><b>Drag</b> the map with click and hold</li><!--<li>Double-clicking on a country will zoom it in, double-clicking on the ocean will zoom out</li>--></ul></div><span class="big top">Keyboard commands</span><div class="bgbox"><ul><li>"<b> &nbsp; </b>" (Space): Pause</li><li><b>+ -</b> (Plus &amp; minus): Play animation faster or slower</li><li><b>⯅ ⯆ ⯇ ⯈</b> (Arrow keys): Start, end, one day back or forward</li><!--<li><b>C</b>, <b>D</b>, <b>I</b> and <b>L</b>: Show or hide the country list, details, info or labels</li>--></ul></div>';
             document.getElementById("loading").innerHTML = '~~~ Loading ~~~';
-            // Hide elements
+            // Hide info & overlay
             toggleBox('overlay');
             toggleBox('info');
+            // Hide elements defined in options
+            if (options.showCountryList == false) { toggleBox('countries'); }
+            if (options.showDetails == false) { toggleBox('details'); }
+            if (options.showTimeline == false) { toggleBox('timeline'); }
             // Load info text
             var infoText = "conflict-prediction-info.html";
             loadFile(infoText, function(infoResponse) { document.getElementById("info-inner").innerHTML = infoResponse; });
@@ -551,7 +555,7 @@
         }
     }
 
-    // Chart.js options
+    // Init Chart.js prototype options
     function initChartOptions() {
         // Chart legend padding
         Chart.Legend.prototype.afterFit = function() {
@@ -591,185 +595,12 @@
 
     // Chart init
     function initCharts() {
-        var chartLabel;
-        // Options for conflict charts
-        var chartoptions = { 
-            animation: { duration: 0 }, 
-            maintainAspectRatio: false, 
-            legend: { /*position: 'bottom',*/ labels: { usePointStyle: true, fontColor: "#666666", fontSize: 11 } }, /*reverse: true,*/
-            elements: { point:{ radius: 0 } }, 
-            scales: { 
-                xAxes: [{ fontColor: "#FF0000", ticks: {
-                    callback: function(label, index, labels) {
-                        if (chartLabel != label.substr(0, 4)) {
-                            chartLabel = label.substr(0, 4);
-                        } else {
-                            chartLabel = '';
-                        }
-                        return chartLabel;
-                    }
-                }, gridLines: { display: true } }], 
-                yAxes: [{ ticks: { fontColor: "#FF0000", /*suggestedMin: 0, fontColor: '#ECB0B0'*/
-                        /*callback: function(label, index, labels) {
-                            if (label >= 1000000) {
-                                return label/1000000+'m';
-                            } else  if (label >= 1000) {
-                                return label/1000+'k';
-                            } else {
-                                return label;
-                            }
-                        }*/
-                    }
-                }]
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-                position: 'custom',
-                caretSize: 0,
-                backgroundColor: 'rgba(250, 250, 250, 0.9)',
-                titleFontSize: 14,
-                titleFontColor: '#666666',
-                bodyFontSize: 13,
-                bodyFontColor: '#666666',
-                borderWidth: 1,
-                borderColor: '#CCCCCC'
-            },
-            plugins: {
-                datalabels: false,
-            }
-        };
-        // Change chart y axis label for conflict chart
-        chartoptions.scales.yAxes = [{
-            id: 'CP',
-            type: 'linear',
-            position: 'left',
-            ticks: { maxTicksLimit: 5, beginAtZero: true }
-        }, {
-            id: 'CG',
-            type: 'linear',
-            position: 'right',
-            ticks: { maxTicksLimit: 5, beginAtZero: true, fontColor: '#ECB0B0' }
-        }];
-        // Hover / click position callback
-        chartoptions.hover = {
-            mode: 'index',
-            intersect: false,
-            onHover: function (event, item) {
-                if (item.length && (event.type == 'click' || event.type == 'mousemove')) {
-                    document.getElementById('map-slider').value = item[0]._index;
-                    document.getElementById('map-slider').dispatchEvent(new Event("input"));
-                }
-            }
-        };
         // Timeline chart
         var timelineCanvas = document.getElementById('timeline-chart-canvas').getContext('2d');
-        chartconflict = new Chart(timelineCanvas, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Probability of Conflict (6 months ahead)',
-                    yAxisID: 'CP',
-                    data: [],
-                    borderWidth: 1,
-                    backgroundColor: 'rgba(128, 128, 128, .3)'
-                }, {
-                    label: 'Composite Conflict Intensity (ground truth)',
-                    yAxisID: 'CG',
-                    data: [],
-                    borderWidth: 1,
-                    backgroundColor: 'rgba(200, 0, 0, .3)'
-                }]
-            },
-            options: chartoptions
-        });
-        // Change chart y axis label for conflict chart
-        chartoptions.scales.xAxes[0].gridLines.display = false;
-        chartoptions.scales.xAxes[0].ticks.display = false;
-        // Push / pull chart
+        timelineChart = new Chart(timelineCanvas, options.chartTimelineOptions);
+        // Detail chart
         var detailCanvas = document.getElementById('details-chart-canvas').getContext('2d');
-        chartpushpull = new Chart(detailCanvas, {
-            type: 'horizontalBar',
-            options: {
-                elements: {
-                    rectangle: {
-                        borderWidth: 1,
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    fontSize: 13,
-                    text: 'Pull factors                Push factors'
-                },
-                tooltips: false,
-                plugins: { 
-                    crosshair: false,
-                    datalabels: {
-                        display: true,
-                        align: function(value, context) {
-                            if (value.datasetIndex != undefined) {
-                                if (value.datasetIndex == 0) {
-                                    return 'left';
-                                } else {
-                                    return 'right';
-                                }
-                            }
-                        },
-                        anchor: function(value, context) {
-                            if (value.datasetIndex != undefined) {
-                                if (value.datasetIndex == 0) {
-                                    return 'end';
-                                } else {
-                                    return 'start';
-                                }
-                            }
-                        },
-                        formatter: function(value, context) {
-                            if (context.dataset.labels != undefined) {
-                                return context.dataset.labels[context.dataIndex];
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    xAxes: [{
-                        ticks: {
-                            min: -0.05, 
-                            max: 0.08,
-                        }, 
-                        gridLines: {
-                            lineWidth: 0,
-                            zeroLineWidth: 1
-                        }
-                    }],
-                    yAxes: [{
-                        stacked: true,
-                        gridLines: {
-                            lineWidth: 0,
-                            zeroLineWidth: 0
-                        }
-                    }],
-                },
-            },
-            data: {
-                labels: ["", "", "", "", ""],
-                datasets: [{
-                    data: [-0.05, -0.04, -0.03, -0.02, -0.01],
-                    backgroundColor: "rgba(128, 128, 128, .3)",
-                    hoverBackgroundColor: "rgba(128, 128, 128, .6)"
-                }, {
-                    data: [0.05, 0.04, 0.03, 0.02, 0.01],
-                    backgroundColor: "rgba(200, 0, 0, .3)",
-                    hoverBackgroundColor: "rgba(200, 0, 0, .6)"
-                }]
-            }
-        });
+        detailChart = new Chart(detailCanvas, options.chartDetailOptions);
     }
 
     // Load javascript helper function
