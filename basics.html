@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+        <title>SeismographAPI Basic Example</title>
+	</head>
+	<body>
+        <!-- Load SeismographAPI library -->
+        <script src="src/seismographAPI.js"></script>
+        <!-- Initialize SeismographAPI with data path -->
+        <script>
+            var myDataPath = 'https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&date=1970:2020&per_page=15000';
+            seismographAPI({ dataPath: myDataPath });
+        </script>
+    </body>
+</html>

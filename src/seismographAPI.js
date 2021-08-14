@@ -1,6 +1,6 @@
 /**
  * SeismographAPI
- * v0.2.3
+ * v0.2.4
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
@@ -93,7 +93,7 @@
 
     // Load SVG World Map
     async function loadSVGMap() {
-        // SVG World Map options fallback
+        // SVG World Map fallback options
         if (Object.keys(options.svgMapOptions).length === 0) {
             options.svgMapOptions = { 
                 libPath: 'lib/', // Point to lib-folder 
@@ -355,10 +355,12 @@
             } else {
                 var countryName = seismographMap.countries[detailCountry].name;
             }
-            countryinfo = '<b>' +  countryName + '</b><br><br>' + formatInteger(detailData[detailCountry][date]);
+            if (detailData[detailCountry] != undefined) {
+                countryinfo = '<b>' +  countryName + '</b><br><br>' + formatInteger(detailData[detailCountry][date]);
+            }
         }
         document.getElementById('details-info').innerHTML = countryinfo;
-        if (detailData[detailCountry][date] != undefined && detailData[detailCountry][date].pull != undefined) {
+        if (detailData[detailCountry] != undefined && detailData[detailCountry][date] != undefined && detailData[detailCountry][date].pull != undefined) {
             var pull = Object.entries(detailData[detailCountry][date].pull);
             var push = Object.entries(detailData[detailCountry][date].push);
             var ppinfo = '<table><tr><th colspan=2>Pull factors</th></tr>';
@@ -738,6 +740,35 @@
 
     // Chart init
     function initCharts() {
+        // Chart.js fallback options
+        var chartFallbackOptions = {
+            type: 'line',
+            data: { labels: [], datasets: [{ backgroundColor: 'rgba(200, 230, 200, .5)' }] },
+            options: { 
+                animation: { duration: 0 }, 
+                maintainAspectRatio: false, 
+                legend: { labels: { usePointStyle: true, fontColor: "#666666", fontSize: 11 } },
+                elements: { point:{ radius: 0 } }, 
+                scales: { yAxes: [{ id: 'CP', ticks: { maxTicksLimit: 5, beginAtZero: true }, }] },
+                tooltips: { mode: 'index', intersect: false, position: 'custom', caretSize: 0, backgroundColor: 'rgba(250, 250, 250, 0.9)', titleFontSize: 14, titleFontColor: '#666666', bodyFontSize: 13, bodyFontColor: '#666666', borderWidth: 1, borderColor: '#CCCCCC' },
+                plugins: { datalabels: false },
+                hover: { mode: 'index', intersect: false,
+                    onHover: function (event, item) {
+                        if (item.length && (event.type == 'click' || event.type == 'mousemove')) {
+                            document.getElementById('map-slider').value = item[0]._index;
+                            document.getElementById('map-slider').dispatchEvent(new Event("input"));
+                        }
+                    }
+                }
+            }
+        };
+        // Clone chart options, if necessary
+        if (Object.keys(options.chartTimelineOptions).length === 0) {
+            options.chartTimelineOptions = JSON.parse(JSON.stringify(chartFallbackOptions));
+        }
+        if (Object.keys(options.chartDetailOptions).length === 0) {
+            options.chartDetailOptions = JSON.parse(JSON.stringify(chartFallbackOptions));
+        }
         // Timeline chart
         var timelineCanvas = document.getElementById('timeline-chart-canvas').getContext('2d');
         timelineChart = new Chart(timelineCanvas, options.chartTimelineOptions);
