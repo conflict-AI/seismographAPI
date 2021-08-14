@@ -1,11 +1,11 @@
 /**
  * SeismographAPI
- * v0.2.1
+ * v0.2.2
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
  * Copyright: Raphael Lepuschitz
- * URL: https://github.com/conflictAI/seismographAPI
+ * URL: https://github.com/conflict-AI/seismographAPI
  * License: MIT
  **/
 
@@ -29,7 +29,8 @@
 
     // Default options
     var options = {
-        dataPath: 'data/', // Point to data path
+        infoTitle: 'SeismographAPI', // Map info title
+        dataPath: '', // Point to data path, e.g. 'data/'
         showCountryList: true, // Show or hide country list
         showDetails: true, // Show or hide details
         showTimeline: true, // Show or hide timeline
@@ -59,7 +60,7 @@
             initUI();
             checkSize();
             checkMobile();
-            loadTimelineData();
+            initDataLoading();
             initChartOptions();
             initCharts();
             initStartup();
@@ -74,13 +75,15 @@
             if (waitcounter > 20) { // Wait 20 * 500ms = 10s for data answer
                 window.clearInterval(startuptimer);
                 document.getElementById('loading').innerHTML = '~~~ There seems to be a problem ~~~<br><br>Please try a <a href="javascript:location.reload()">relaod</a>';
+            } else if (options.dataPath == '') {
+                document.getElementById('loading').innerHTML = '~~~ No Dataset ~~~'; 
             } else if (timelineData == undefined) {
                 document.getElementById('loading').innerHTML = '~~~ Loading Data ~~~'; 
-            } else if (svgInit == false && svgLoaded == false && colorData != undefined && timelineData != undefined && detailData != undefined) {
+            } else if (svgInit == false && svgLoaded == false && Object.keys(colorData).length > 0 && timelineData != undefined && detailData != undefined) {
                 document.getElementById('loading').innerHTML = '~~~ Loading Map ~~~'; 
                 loadSVGMap();
                 svgInit = true;
-            } else if (svgLoaded == true && colorData != undefined && timelineData != undefined && detailData != undefined && document.getElementById('map-slider') != null) {
+            } else if (svgLoaded == true && timelineData != undefined && detailData != undefined && document.getElementById('map-slider') != null) {
                 window.clearInterval(startuptimer);
                 document.getElementById('loading').innerHTML = '~~~ All Data Loaded ~~~';
                 initSVGMap();
@@ -90,6 +93,22 @@
 
     // Load SVG World Map
     async function loadSVGMap() {
+        // SVG World Map options fallback
+        if (Object.keys(options.svgMapOptions).length === 0) {
+            options.svgMapOptions = { 
+                libPath: 'lib/', // Point to lib-folder 
+                bigMap: false, // Use small map
+                showOcean: false, // Show or hide ocean layer
+                showAntarctica: false, // Show or hide antarctic layer
+                showInfoBox: true, // Show info box
+                worldColor: '#EFEFEF', 
+                labelFill: { out: '#666666',  over: '#444444',  click: '#444444' }, 
+                provinceStroke: { out: '#CCCCCC',  over: '#999999',  click: '#999999' }, 
+                provinceStrokeWidth: { out: '0.3',  over: '0.3',  click: '0.5' }, 
+                timeControls: true, // Time data to activate time antimation controls
+            };
+        }
+        // Init SVG World Map
         seismographMap = await svgWorldMap(options.svgMapOptions, false, colorData);
         mapSVG = seismographMap.worldMap;
         svgLoaded = true;
@@ -100,7 +119,11 @@
     function initSVGMap() {
         if (svgLoaded == true) {
             // Change start day
-            document.getElementById('map-slider').value = Object.keys(timelineData[1]).length - 12; // Start 12 months ago
+            if (timelineData[1] != undefined) {
+                document.getElementById('map-slider').value = Object.keys(timelineData[1]).length - 12; // Start 12 months ago
+            } else {
+                document.getElementById('map-slider').value = Object.keys(timelineData).length - 5; // Start 5 years ago
+            }
             document.getElementById('map-slider').oninput();
             document.getElementById('map-control-play-pause').click();
             // Build country list 
@@ -116,8 +139,10 @@
                 svgPanZoom.pan({ x: -5, y: 20 }); // Set map to better start position for small horizontal screens
                 svgPanZoom.zoomBy(1.1); // Zoom in for small screens
             }
-            // Uncheck checkbox
-            document.getElementById('predsync').checked = false;
+            // Uncheck checkbox, only for conflict map
+            if (document.getElementById('predsync') != undefined) {
+                document.getElementById('predsync').checked = false;
+            }
             // Hide loading and show boxes and map after startup
             toggleBox('loading');
             if (smallScreen != 'landscape') {
@@ -147,6 +172,54 @@
                 }, 400);
             }, 200);
         }
+    }
+
+    // Check data source and switch loading
+    function initDataLoading() {
+        if (options.dataPath.indexOf('http') == -1) {
+            loadTimelineData();
+        } else {
+            loadExternalData();
+        }
+    }
+
+    // Wait for JSON load and pass data to library 
+    function loadExternalData() {
+        loadFile(options.dataPath, function(dataResponse) {
+            var externalDataParsed = JSON.parse(dataResponse);
+            //console.log(externalDataParsed);
+            for (var dataObject in externalDataParsed[1]) {
+                var date = externalDataParsed[1][dataObject].date;
+                var country = externalDataParsed[1][dataObject].country.id;
+                var value = externalDataParsed[1][dataObject].value;
+                // Add timeline data
+                if (timelineData[date] == undefined) {
+                    timelineData[date] = {};
+                }
+                if (timelineData[date][country] == undefined) {
+                    timelineData[date][country] = value;
+                }
+                // Add detail data
+                if (detailData[country] == undefined) {
+                    detailData[country] = {};
+                }
+                if (detailData[country][date] == undefined) {
+                    detailData[country][date] = value;
+                }
+                // Add world timeline data
+                if (country == '1W') {
+                    timelineData[date]['World'] = value;
+                }
+            }
+            // Add world detail data
+            detailData['World'] = detailData['1W'];
+            // Add chart data labels
+            timelineChart.data.labels = Object.keys(timelineData);
+            // Startup
+            updateDetails();
+            initColorData();
+            updateTimeline();
+        });
     }
 
     // Wait for JSON load and pass data to library 
@@ -180,63 +253,112 @@
 
     // Sort conflict data for map countries
     function initColorData() {
-        colorData = JSON.parse(JSON.stringify(timelineData[1])); // Copy conflict object 
-        for (var date in timelineData[1]) {
-            for (var country in timelineData[1][date]) {
-                var value = timelineData[1][date][country] * 255;
-                var rgb = 'rgb(255,' + (255-value) + ',' + (255-value) + ')';
-                colorData[date][country] = rgb;
+        if (timelineData[1] != undefined) {
+            timelineDataset = timelineData[1];
+        } else {
+            timelineDataset = timelineData;
+        }
+        colorData = JSON.parse(JSON.stringify(timelineDataset)); // Copy conflict object 
+        for (var date in timelineDataset) {
+            for (var country in timelineDataset[date]) {
+                if (timelineData[1] != undefined) {
+                    var value = timelineDataset[date][country] * 255;
+                    var rgb = 'rgb(255,' + (255-value) + ',' + (255-value) + ')';
+                    colorData[date][country] = rgb;
+                } else {
+                    //var modulo = timelineDataset[date][country] % 256;
+                    //colorData[date][country] = 'rgb(' + modulo + ',' + modulo + ',' + modulo + ')';
+                    if (timelineDataset[date-1] != undefined) {
+                        if (timelineDataset[date][country] > timelineDataset[date-1][country]) {
+                            colorData[date][country] = 'rgb(200,230,200)';
+                        } else {
+                            colorData[date][country] = 'rgb(230,200,200)';
+                        }
+                    } else {
+                        colorData[date][country] = 'rgb(200,200,200)';
+                    }
+                    // Fix French Guyana with data from France
+                    if (country == 'FR') {
+                        colorData[date]['GF'] = colorData[date]['FR'];
+                    }
+                    // Fix Western Sahara with data from Morocco
+                    if (country == 'MA') {
+                        colorData[date]['EH'] = colorData[date]['MA'];
+                    }
+                }
             }
         }
+        //console.log(colorData);
     }
 
     // Update timeline chart
     function updateTimeline() {
-        timelineChart.data.datasets[0].data = [];
-        timelineChart.data.datasets[1].data = [];
-        for (var date in timelineData[1]) {
-            for (var country in timelineData[1][date]) {
-                if (country == detailCountry) {
-                    timelineChart.data.datasets[0].data.push(timelineData[0][date][country]);
-                    timelineChart.data.datasets[1].data.push(timelineData[1][date][country]);
+        if (timelineData[1] != undefined) {
+            timelineChart.data.datasets[0].data = [];
+            timelineChart.data.datasets[1].data = [];
+            for (var date in timelineData[1]) {
+                for (var country in timelineData[1][date]) {
+                    if (country == detailCountry) {
+                        timelineChart.data.datasets[0].data.push(timelineData[0][date][country]);
+                        timelineChart.data.datasets[1].data.push(timelineData[1][date][country]);
+                    }
                 }
             }
-        }
-        // Sync data = prepend 6 months in proediction
-        if (syncData) {
-            var length = timelineChart.data.datasets[0].data.length;
-            var prepend = [0, 0, 0, 0, 0, 0];
-            timelineChart.data.datasets[0].data = prepend.concat(timelineChart.data.datasets[0].data);
-            timelineChart.data.datasets[0].data = timelineChart.data.datasets[0].data.slice(0, length);
+            // Sync data = prepend 6 months in prediction
+            if (syncData) {
+                var length = timelineChart.data.datasets[0].data.length;
+                var prepend = [0, 0, 0, 0, 0, 0];
+                timelineChart.data.datasets[0].data = prepend.concat(timelineChart.data.datasets[0].data);
+                timelineChart.data.datasets[0].data = timelineChart.data.datasets[0].data.slice(0, length);
+            }
+        } else {
+            timelineChart.data.datasets[0].data = [];
+            for (var date in timelineData) {
+                for (var country in timelineData[date]) {
+                    if (country == detailCountry) {
+                        timelineChart.data.datasets[0].data.push(timelineData[date][country]);
+                    }
+                }
+            }
         }
         timelineChart.update();
     }
 
     // Update details
     function updateDetails() {
-        var date = Object.keys(timelineData[1])[day];
+        if (timelineData[1] != undefined) {
+            var date = Object.keys(timelineData[1])[day];
+        } else {
+            var date = Object.keys(timelineData)[day];
+        }
         // Set vertical line
         timelineChart.data.lineAtIndex = day;
         timelineChart.update();
         // Update info
         if (detailCountry == 'World') {
-            //document.getElementById('countrytitle').innerHTML =  'World';
             document.getElementById('timeline-title').innerHTML =  'World';
             document.getElementById('timeline-back').innerHTML =  '(click a country for details)';
         } else {
-            //document.getElementById('countrytitle').innerHTML = seismographMap.countries[detailCountry].name;
             document.getElementById('timeline-title').innerHTML = seismographMap.countries[detailCountry].name;
             document.getElementById('timeline-back').innerHTML =  '(<a onclick="mapClick(\'World\')">back to global view</a>)';
         }
-        if (timelineData[0][date] != undefined) {
-            var countryinfo = '<table>';
-            countryinfo += '<tr><td><b>' + document.getElementById('timeline-title').innerHTML + '</b></td><td><b>' + date + '</b></td></tr>';
+        // TODO: Refactor
+        var countryinfo = '';
+        if (timelineData[0] != undefined && timelineData[0][date] != undefined) {
+            countryinfo += '<table><tr><td><b>' + document.getElementById('timeline-title').innerHTML + '</b></td><td><b>' + date + '</b></td></tr>';
             countryinfo += '<tr><td>Probability of Conf.<br><small>(+6 months)</small></td><td>Conflict Intensity<br><small>(ground truth)</small></td></tr>';
             countryinfo += '<tr><td><b>' + timelineData[0][date][detailCountry] + '</b></td><td><b>' + timelineData[1][date][detailCountry] + '</b></td></tr>';
             countryinfo += '</table>';
-            document.getElementById('details-info').innerHTML = countryinfo;
+        } else if (timelineData[date] != undefined) {
+            if (seismographMap == undefined || seismographMap.countries[detailCountry].name == undefined) {
+                var countryName = 'World';
+            } else {
+                var countryName = seismographMap.countries[detailCountry].name;
+            }
+            countryinfo = '<b>' +  countryName + '</b><br><br>' + formatInteger(detailData[detailCountry][date]);
         }
-        if (detailData[detailCountry][date] != undefined) {
+        document.getElementById('details-info').innerHTML = countryinfo;
+        if (detailData[detailCountry][date] != undefined && detailData[detailCountry][date].pull != undefined) {
             var pull = Object.entries(detailData[detailCountry][date].pull);
             var push = Object.entries(detailData[detailCountry][date].push);
             var ppinfo = '<table><tr><th colspan=2>Pull factors</th></tr>';
@@ -250,21 +372,26 @@
             }
             ppinfo += '</table>';
             document.getElementById('details-legend').innerHTML = ppinfo;
-            // Update detail chart
-            updateDetailChart();
         }
-        // Update country list
+        // Update detail chart and country list
+        updateDetailChart();
         updateCountryList();
     }
 
     // Update detail chart
     // Format: [0] = pull, [1] = push
     function updateDetailChart() {
-        var date = Object.keys(timelineData[1])[day];
-        detailChart.data.datasets[0].labels = Object.keys(detailData[detailCountry][date].pull);
-        detailChart.data.datasets[1].labels = Object.keys(detailData[detailCountry][date].push);
-        detailChart.data.datasets[0].data = changeToNegative(Object.values(detailData[detailCountry][date].pull));
-        detailChart.data.datasets[1].data = Object.values(detailData[detailCountry][date].push);
+        if (timelineData[1] != undefined) {
+            var date = Object.keys(timelineData[1])[day];
+            detailChart.data.datasets[0].labels = Object.keys(detailData[detailCountry][date].pull);
+            detailChart.data.datasets[1].labels = Object.keys(detailData[detailCountry][date].push);
+            detailChart.data.datasets[0].data = changeToNegative(Object.values(detailData[detailCountry][date].pull));
+            detailChart.data.datasets[1].data = Object.values(detailData[detailCountry][date].push);
+        } else {
+            updateTimeline(); // Not good - make better trigger for chart data copy
+            detailChart.data.datasets[0].labels = timelineChart.data.datasets[0].labels;
+            detailChart.data.datasets[0].data = timelineChart.data.datasets[0].data;
+        }
         detailChart.update();
     }
 
@@ -286,22 +413,36 @@
 
     // Update country list
     function updateCountryList() {
-        var date = Object.keys(timelineData[1])[day];
+        if (timelineData[1] != undefined) {
+            timelineDataset = timelineData[1];
+        } else {
+            timelineDataset = timelineData;
+        }
+        var date = Object.keys(timelineDataset)[day];
         if (seismographMap != undefined) {
             for (var country in seismographMap.countries) {
                 var countryCode = seismographMap.countries[country].id;
-                if (timelineData[1][date][countryCode] != undefined) {
+                if (timelineDataset[date][countryCode] != undefined) {
                     if (document.getElementById(countryCode) != null) {
-                        var conflictday = timelineData[1][date][countryCode];
-                        var predicitonday = timelineData[0][date][countryCode];
+                        var conflictday = timelineDataset[date][countryCode];
                         var countryName = document.getElementById(countryCode).dataset.name;
+                        if (timelineData[1] != undefined) {
+                            var predicitonday = timelineData[0][date][countryCode];
+                            if (conflictday > 0) { 
+                                document.getElementById(countryCode).dataset.prediciton = predicitonday;
+                            } else {
+                                document.getElementById(countryCode).dataset.prediciton = '';
+                            }
+                        }
                         if (conflictday > 0) { 
                             document.getElementById(countryCode).dataset.conflict = conflictday;
-                            document.getElementById(countryCode).dataset.prediciton = predicitonday;
-                            document.getElementById(countryCode).innerHTML = '<span class="small red">' + formatInteger(conflictday) + '</span> <span class="small grey">' + formatInteger(predicitonday) + '</span>' + countryName;
+                            document.getElementById(countryCode).innerHTML = '<span class="small red">' + formatInteger(conflictday) + '</span>';
+                            if (timelineData[1] != undefined) {
+                                document.getElementById(countryCode).innerHTML += '<span class="small grey">' + formatInteger(predicitonday) + '</span>';
+                            }
+                            document.getElementById(countryCode).innerHTML += countryName;
                         } else {
                             document.getElementById(countryCode).dataset.conflict = '';
-                            document.getElementById(countryCode).dataset.prediciton = '';
                             document.getElementById(countryCode).innerHTML = countryName;
                         }
                     }
@@ -547,10 +688,13 @@
             // Load info text
             var infoText = "conflict-prediction-info.html";
             loadFile(infoText, function(infoResponse) { document.getElementById("info-inner").innerHTML = infoResponse; });
-            // Ony for development
-            document.getElementById("details-title").innerHTML = 'Neural Network SHAP Interpretability';
-            document.getElementById("timeline-info").innerHTML += '<span><input type="checkbox" id="predsync" name="predsync" onclick="syncPrediction()"><label for="predsync">Sync prediction with ground truth</label></span>';
-            document.getElementById("timeline-info").innerHTML += '<div id="about"><a onclick="toggleInfo()">About <i class="flaticon-question"></i></a></div>';
+            // Set info title
+            document.getElementById("details-title").innerHTML = options.infoTitle;
+            // Only for Conflict AI Map
+            if (options.infoTitle == 'Neural Network SHAP Interpretability') {
+                document.getElementById("timeline-info").innerHTML += '<span><input type="checkbox" id="predsync" name="predsync" onclick="syncPrediction()"><label for="predsync">Sync prediction with ground truth</label></span>';
+                document.getElementById("timeline-info").innerHTML += '<div id="about"><a onclick="toggleInfo()">About <i class="flaticon-question"></i></a></div>';
+            }
         }
     }
 
