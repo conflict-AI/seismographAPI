@@ -5,8 +5,20 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>SeismographAPI World Bank Data Example</title>
         <link rel="icon" href="favicon.png" sizes="32x32" />
+        <style>
+            #address { top: 0; left: 202px; right: 302px; height: 30px; border-top: none; }
+            #address-input { color: #969696; background-color: #FFFFFF; border-radius: 2px; border: none; outline: none; font-size: 13px; padding: 7px 4px; margin-left: 3px; width: 50%; }
+            #address-input:hover { color: #444444; background-color: #EFEFEF; }
+        </style>
 	</head>
 	<body>
+        <!-- Address bar -->
+        <div id="address" class="box">
+            <form>
+                Data URL:<input id="address-input" name="url" type="text" autocomplete="off" value="https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&date=2000:2020&per_page=6000">
+            </form>
+        </div>
+
         <!-- Load SeismographAPI library -->
         <script src="src/seismographAPI.js"></script>
 
@@ -54,13 +66,16 @@
                 }
             }
         };
-        var chartDetailOptions = chartTimelineOptions;
+
+        // Clone timeline options for detail chart
+        var chartDetailOptions = JSON.parse(JSON.stringify(chartTimelineOptions));
+        chartDetailOptions.data.datasets = [{ backgroundColor: 'rgba(200, 200, 200, .5)' }];
 
         // SeismographAPI options
         var options = {
             
             infoTitle: 'SeismographAPI<br><small>World Bank Data Example</small>', // Map info title
-            dataPath: 'http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&date=2000:2020&per_page=6000', // Point to data path
+            dataPath: 'https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?format=json&date=2000:2020&per_page=6000', // Point to data path
 
             //svgMapOptions: svgMapOptions, // SVG World Map options
             chartDetailOptions: chartDetailOptions, // Chart.js options
@@ -71,6 +86,12 @@
             showTimeline: true, // Show or hide timeline
             darkMode: false, // Toggle dark mode
         };
+
+        // Override dataPath, if set
+        if (window.location.search != '') {
+            options.dataPath = decodeURIComponent(window.location.search).substr(5);
+            document.getElementById('address-input').value = options.dataPath;
+        }
 
         // Init SeismographAPI
         seismographAPI(options);

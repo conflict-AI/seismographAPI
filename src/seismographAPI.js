@@ -1,6 +1,6 @@
 /**
  * SeismographAPI
- * v0.2.2
+ * v0.2.3
  * 
  * Description: A Javascript API built upon SVG World Map JS and Chart.JS for time series data visualization. 
  * Author: Raphael Lepuschitz <raphael.lepuschitz@gmail.com>
@@ -131,7 +131,7 @@
             // Init svgPanZoom library
             svgPanZoom = window.svgPanZoom(mapSVG, { minZoom: 1, dblClickZoomEnabled: false });  //controlIconsEnabled: true, beforePan: beforePan
             if (smallScreen == false) {
-                svgPanZoom.pan({ x: -90, y: 0 }); // Set map to better start position for big horizontal screens
+                svgPanZoom.pan({ x: -90, y: 10 }); // Set map to better start position for big horizontal screens
             } else if (smallScreen == 'portrait') {
                 svgPanZoom.pan({ x: -5, y: 170 }); // Set map to better start position for small vertical screens
                 svgPanZoom.zoomBy(1.4); // Zoom in for small screens
