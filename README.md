@@ -26,7 +26,7 @@ Effective decision-making for crisis mitigation increasingly relies on visualisa
 Showcase
 --------
 
-| [Conflict prediction interpretability map](https://conflict-ai.org/conflict-map/) | [COVID-19 Corona virus world map](https://conflict-ai.org/covid-map/) | 
+| [Conflict prediction interpretability map](https://conflict-ai.github.io/seismographAPI/conflict-map.html) | [COVID-19 Corona virus world map](https://conflict-ai.github.io/seismographAPI/covid-map.html) | 
 |:---:|:---:|
 | ![](https://conflict-ai.org/conflict-map/SeismographAPI-conflict.png) | ![](https://conflict-ai.org/covid-map/SeismographAPI-covid.png) | 
 
@@ -102,6 +102,26 @@ seismographAPI({ dataPath: 'data/' });
 ```
 
 
+Citing
+------
+
+> Niklas Stoehr, Raphael Lepuschitz <br>
+> **SeismographAPI: Visualising Temporal-Spatial Crisis Data**, <br>
+> 2021, KDD 2021 Humanitarian Mapping Workshop, https://arxiv.org/abs/2107.12443
+
+```
+@misc{lepuschitz2021seismographapi,
+      title={SeismographAPI: Visualising Temporal-Spatial Crisis Data}, 
+      author={Raphael Lepuschitz and Niklas Stoehr},
+      year={2021},
+      eprint={2107.12443},
+      archivePrefix={arXiv},
+      primaryClass={cs.HC}
+}
+
+```
+
+
 Further Development & Changelog
 -------------------------------
 
@@ -116,6 +136,8 @@ Further Development & Changelog
 <details>
 <summary><b>Done</b></summary>  
 
+* 0.2.5
+  * Updated README
 * 0.2.4
   * Added basic example
   * Added fallback options for Chart.js
@@ -190,7 +212,7 @@ Further Development & Changelog
 About
 -----
 
-SeismographAPI is developed by [Niklas Stöhr](https://niklas-stoehr.com/) and [Raphael Lepuschitz](https://lepuschitzmedia.com/).
+SeismographAPI is developed by [Niklas Stoehr](https://niklas-stoehr.com/) and [Raphael Lepuschitz](https://lepuschitzmedia.com/).
 
 
 License
